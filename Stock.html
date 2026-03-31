@@ -108,45 +108,46 @@
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
     
-    let stockData = []; 
+    // ดึงชื่อหมวดหมู่จาก URL (เช่น ?cat=drive%2008)
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCat = urlParams.get('cat');
 
-    // รายชื่อหมวดหมู่ทั้งหมด
-    const allCategories = [
-        "drive 08", "drive 16", "drive 32", "drive 48", "drive 64", 
-        "KPS", "MFC", "DSE", "Safety95", "SafetyXP", 
-        "Com95", "ComXP", "การ์ดจอ"
-    ];
+    async function loadCategoryData() {
+        if (!selectedCat) return;
+        
+        // แสดงชื่อหมวดหมู่ที่หัวข้อ
+        document.getElementById('categoryTitle').innerText = `หมวดหมู่: ${selectedCat}`;
 
-    async function fetchData() {
         try {
             const response = await fetch(scriptURL);
-            stockData = await response.json();
-            createCategoryMenu();
+            const data = await response.json();
+            
+            // กรองเฉพาะข้อมูลที่ตรงกับหมวดหมู่ที่ส่งมา
+            const filteredData = data.filter(item => item.cat === selectedCat);
+            renderTable(filteredData);
+            
         } catch (error) {
-            document.getElementById('categoryChips').innerHTML = '<span style="color:red; text-align:center;">❌ โหลดข้อมูลไม่สำเร็จ</span>';
+            console.error("Error loading data", error);
         }
     }
 
-    function createCategoryMenu() {
-        const chipContainer = document.getElementById('categoryChips');
-        chipContainer.innerHTML = ''; 
-
-        allCategories.forEach(cat => {
-            const count = stockData.filter(item => item.cat === cat).length;
-            const chip = document.createElement('div');
-            chip.className = 'cat-chip';
-            chip.innerHTML = `<span>${cat}</span> <span class="cat-count">${count} รายการ</span>`;
-            
-            // เมื่อกดแล้วจะส่งไปหน้า view_category.html พร้อมชื่อหมวดหมู่
-            chip.onclick = () => {
-                const targetPage = 'view_category.html'; // ชื่อไฟล์หน้าแสดงผลของคุณ
-                window.location.href = `${targetPage}?cat=${encodeURIComponent(cat)}`;
-            };
-            chipContainer.appendChild(chip);
-        });
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">ไม่มีข้อมูลในหมวดนี้</td></tr>';
+            return;
+        }
+        
+        // ใช้ logic map ข้อมูลลงตารางแบบเดิมที่คุณมี...
+        tbody.innerHTML = data.map(item => `
+            <tr>
+                <td data-label="รหัส">${item.id}</td>
+                <td data-label="อาการ">${item.name}</td>
+                </tr>
+        `).join('');
     }
 
-    fetchData();
+    loadCategoryData();
 </script>
 </body>
 </html>
