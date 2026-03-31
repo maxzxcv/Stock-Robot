@@ -5,103 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>คลังสินค้า - Repairaf</title>
     <style>
-        /* --- สไตล์พื้นฐาน --- */
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f0f2f5; margin: 0; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        /* --- พื้นฐาน --- */
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f4f7f6; margin: 0; color: #333; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
-        h2 { color: #2575fc; margin: 0; font-size: 1.3rem; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+        h2 { color: #2575fc; margin: 0; font-size: 1.2rem; }
         
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; text-align: center; border: none; }
+        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 13px; border: none; }
 
-        /* ส่วนค้นหา */
-        .filter-section { display: flex; gap: 8px; margin-bottom: 15px; }
-        .search-box { flex: 2; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
-        .category-filter { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: white; }
+        /* ส่วนค้นหาและกรอง */
+        .filter-section { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .search-box { grid-column: span 2; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; }
+        .category-filter { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; }
 
-        /* ตาราง Desktop */
-        .table-responsive { width: 100%; overflow-x: auto; }
+        /* การจัดการตารางใน Desktop */
+        .table-responsive { width: 100%; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-        th { background-color: #2575fc; color: white; }
-        
-        .btn-show-img { background: #f0e6ff; color: #6a11cb; border: 1px solid #6a11cb; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; font-weight: bold; }
-        .btn-edit { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-delete { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .action-buttons { display: flex; gap: 5px; }
+        th { background-color: #2575fc; color: white; padding: 12px; text-align: left; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
 
-        /* Modal รูปภาพ */
-        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
-        .modal-content-wrapper { position: relative; width: 95%; height: 80%; display: flex; align-items: center; justify-content: center; }
-        .modal-content { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .close-modal { position: absolute; top: -50px; right: 0; color: white; font-size: 40px; cursor: pointer; }
+        /* ปุ่มต่างๆ */
+        .btn-show-img { background: #6a11cb; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; width: 100%; margin-top: 5px; }
+        .btn-edit { background: #ffc107; color: #000; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; flex: 1; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; flex: 1; }
+        .action-buttons { display: flex; gap: 8px; margin-top: 8px; }
 
-        /* --- สำหรับโทรศัพท์ (Mobile Compact) --- */
+        /* --- สไตล์สำหรับมือถือแนวตั้ง (Responsive) --- */
         @media screen and (max-width: 600px) {
-            .container { padding: 10px; }
             h2 { font-size: 1.1rem; }
-            .btn-nav { padding: 8px 12px; font-size: 13px; }
             
+            /* เปลี่ยนตารางเป็น Card */
             table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; } /* ซ่อนหัวตารางเดิม */
             
             tr { 
-                border: 1px solid #eee; 
-                margin-bottom: 12px; 
-                border-radius: 8px; 
-                background: #fff; 
-                padding: 8px; 
-                box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+                border: 1px solid #e0e0e0; 
+                margin-bottom: 15px; 
+                border-radius: 10px; 
+                padding: 12px;
+                background: #fff;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             }
 
             td { 
                 border: none; 
+                padding: 6px 0 6px 40%; 
                 position: relative; 
-                padding: 5px 5px 5px 35%; 
-                font-size: 13px;
-                min-height: 22px;
+                min-height: 20px;
+                font-size: 14px;
                 display: flex;
                 align-items: center;
+                text-align: right;
+                justify-content: flex-end;
             }
 
-            /* ซ่อนบางฟิลด์ที่ไม่จำเป็นต้องมี Label หรือจัดแบบ Inline */
-            td[data-label="วันที่"], td[data-label="หมวดหมู่"] { display: inline-flex; width: 48%; padding-left: 5px; border-bottom: 1px solid #f9f9f9; }
-            td[data-label="วันที่"]:before, td[data-label="หมวดหมู่"]:before { position: static; content: ""; }
-            
+            /* หัวข้อจำลองด้านซ้าย */
             td:before { 
-                position: absolute; 
-                left: 8px; 
-                width: 30%; 
-                font-weight: bold; 
-                color: #888; 
-                content: attr(data-label); 
-                font-size: 12px;
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 35%;
+                font-weight: 600;
+                color: #666;
+                text-align: left;
+                font-size: 13px;
             }
 
-            /* เน้นรหัสสินค้า */
-            td[data-label="รหัส"] { font-size: 15px; background: #f8f9ff; border-radius: 5px; margin: 4px 0; }
+            /* เน้นข้อมูลสำคัญ */
+            td[data-label="รหัส"] { font-size: 16px; font-weight: bold; color: #2575fc; border-bottom: 1px dashed #eee; margin-bottom: 5px; padding-top: 0; }
+            td[data-label="รหัส"]:before { color: #2575fc; }
 
-            .action-buttons { width: 100%; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px; }
-            .btn-edit, .btn-delete { flex: 1; text-align: center; padding: 10px; }
+            /* จัดการพื้นที่ปุ่ม */
+            td[data-label="จัดการ"], td[data-label="รูปภาพ"] { 
+                padding-left: 0; 
+                display: block; 
+                text-align: center;
+                border-top: 1px solid #f9f9f9;
+                margin-top: 5px;
+            }
+            td[data-label="จัดการ"]:before, td[data-label="รูปภาพ"]:before { display: none; }
             
-            .btn-show-img { margin-top: 8px; padding: 8px; }
-
-            /* ปรับแต่ง input แก้ไขในมือถือ */
-            .edit-input { width: 100%; padding: 8px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px; }
+            .edit-input { width: 100% !important; margin: 4px 0; font-size: 16px !important; }
         }
+
+        /* Modal รูปภาพ (Responsive) */
+        .modal { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
+        .modal-content-wrapper { position: relative; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; }
+        .modal-content { width: 90%; max-height: 80vh; object-fit: contain; border-radius: 8px; }
+        .close-modal { position: absolute; top: -50px; right: 20px; color: white; font-size: 40px; cursor: pointer; }
+        .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 30px; padding: 10px; cursor: pointer; position: absolute; border-radius: 50%; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-flex">
-        <h2>📦 สต็อกสินค้า</h2>
-        <a href="add_Item.html" class="btn-nav">+ เพิ่มใหม่</a>
+        <h2>📦 รายการสต็อก</h2>
+        <a href="add_Item.html" class="btn-nav">+ เพิ่มสินค้า</a>
     </div>
 
     <div class="filter-section">
+        <input type="text" id="searchInput" class="search-box" onkeyup="renderTable()" placeholder="🔍 ค้นหารหัส, อาการ, หรือที่เก็บ...">
         <select id="catFilter" class="category-filter" onchange="renderTable()">
-            <option value="">-- หมวดหมู่ --</option>
+            <option value="">ทุกหมวดหมู่</option>
             <option value="drive 08">drive 08</option>
             <option value="drive 16">drive 16</option>
             <option value="drive 32">drive 32</option>
@@ -116,7 +123,6 @@
             <option value="ComXP">ComXP</option>
             <option value="การ์ดจอ">การ์ดจอ</option>
         </select>
-        <input type="text" id="searchInput" class="search-box" onkeyup="renderTable()" placeholder="🔍 ค้นหา...">
     </div>
 
     <div class="table-responsive">
@@ -141,15 +147,14 @@
 <div id="imageModal" class="modal">
     <div class="modal-content-wrapper">
         <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div id="imageCounter" style="position:absolute; top:-40px; left:10px; color:white;">1 / 1</div>
-        <button onclick="changeSlide(-1)" style="position:absolute; left:0; background:none; border:none; color:white; font-size:40px;">&#10094;</button>
+        <button class="nav-btn" style="left: 10px;" onclick="changeSlide(-1)">&#10094;</button>
         <img class="modal-content" id="fullImage">
-        <button onclick="changeSlide(1)" style="position:absolute; right:0; background:none; border:none; color:white; font-size:40px;">&#10095;</button>
+        <button class="nav-btn" style="right: 10px;" onclick="changeSlide(1)">&#10095;</button>
+        <div id="imageCounter" style="position:absolute; bottom:-40px; color:white; width:100%; text-align:center;">1 / 1</div>
     </div>
 </div>
 
 <script>
-    // --- (ส่วน JavaScript ทั้งหมดเหมือนเดิม) ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
     
     let stockData = []; 
@@ -158,13 +163,13 @@
 
     async function fetchData() {
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px;">⌛ โหลดข้อมูล...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:50px;">⌛ กำลังโหลดข้อมูล...</td></tr>';
         try {
             const response = await fetch(scriptURL);
             stockData = await response.json();
             renderTable();
         } catch (error) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding:30px;">❌ โหลดล้มเหลว</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding:50px;">❌ ไม่สามารถโหลดข้อมูลได้</td></tr>';
         }
     }
 
@@ -185,14 +190,14 @@
                 let images = [];
                 try { images = typeof item.imgs === 'string' ? JSON.parse(item.imgs) : (item.imgs || []); } catch(e) { images = []; }
                 
-                const photoCell = images.length > 0 
-                    ? `<button class="btn-show-img" onclick="openModal(${index}, 0)">🖼️ รูปภาพ (${images.length})</button>`
+                const photoBtn = images.length > 0 
+                    ? `<button class="btn-show-img" onclick="openModal(${index}, 0)">🖼️ ดูรูปภาพ (${images.length})</button>`
                     : `<span style="color:#ccc; font-size:12px;">ไม่มีรูป</span>`;
 
                 tr.innerHTML = `
                     <td data-label="วันที่">${item.date}</td>
                     <td data-label="หมวดหมู่">${item.cat || '-'}</td>
-                    <td data-label="รหัส"><b>${item.id}</b></td>
+                    <td data-label="รหัส">${item.id}</td>
                     <td data-label="อาการ">${item.name}</td>
                     <td data-label="จำนวน">${item.qty}</td>
                     <td data-label="ที่เก็บ">${item.loc}</td>
@@ -202,16 +207,13 @@
                             <button class="btn-delete" onclick="deleteItem(${index})">ลบ</button>
                         </div>
                     </td>
-                    <td data-label="รูปภาพ">${photoCell}</td>
+                    <td data-label="รูปภาพ">${photoBtn}</td>
                 `;
                 tbody.appendChild(tr);
             }
         });
     }
 
-    // ฟังก์ชันอื่นๆ (editRow, saveEdit, deleteItem, openModal) คงเดิมตามโค้ดต้นฉบับของคุณ
-    // ... (สามารถคัดลอกส่วนที่เหลือจากโค้ดเดิมมาใส่ได้เลย) ...
-    
     function editRow(index) {
         const item = stockData[index];
         const rows = document.getElementById('tableBody').rows;
@@ -219,15 +221,16 @@
         for(let r of rows) { if(r.innerHTML.includes(`editRow(${index})`)) targetRow = r; }
         
         targetRow.innerHTML = `
-            <div style="padding:10px; border:1px solid #2575fc; border-radius:8px;">
-                <label style="font-size:12px; color:#2575fc">วันที่:</label><input type="date" id="eDate${index}" class="edit-input" value="${item.date}">
-                <label style="font-size:12px; color:#2575fc">หมวดหมู่:</label><input type="text" id="eCat${index}" class="edit-input" value="${item.cat}">
-                <label style="font-size:12px; color:#2575fc">รหัส:</label><input type="text" id="eId${index}" class="edit-input" value="${item.id}">
-                <label style="font-size:12px; color:#2575fc">อาการ:</label><input type="text" id="eName${index}" class="edit-input" value="${item.name}">
-                <label style="font-size:12px; color:#2575fc">จำนวน:</label><input type="number" id="eQty${index}" class="edit-input" value="${item.qty}">
-                <label style="font-size:12px; color:#2575fc">ที่เก็บ:</label><input type="text" id="eLoc${index}" class="edit-input" value="${item.loc}">
+            <div style="background:#f0f7ff; padding:15px; border-radius:8px; border:1px solid #2575fc;">
+                <b style="color:#2575fc; display:block; margin-bottom:10px;">✏️ แก้ไขข้อมูล: ${item.id}</b>
+                <input type="date" id="eDate${index}" class="edit-input" value="${item.date}">
+                <input type="text" id="eCat${index}" class="edit-input" placeholder="หมวดหมู่" value="${item.cat}">
+                <input type="text" id="eId${index}" class="edit-input" placeholder="รหัส" value="${item.id}">
+                <input type="text" id="eName${index}" class="edit-input" placeholder="อาการ" value="${item.name}">
+                <input type="number" id="eQty${index}" class="edit-input" placeholder="จำนวน" value="${item.qty}">
+                <input type="text" id="eLoc${index}" class="edit-input" placeholder="ที่เก็บ" value="${item.loc}">
                 <div class="action-buttons">
-                    <button class="btn-nav" style="background:#007bff; flex:1;" onclick="saveEdit(${index})">✅ ตกลง</button>
+                    <button class="btn-nav" style="background:#007bff; flex:1;" onclick="saveEdit(${index})">✅ บันทึก</button>
                     <button class="btn-delete" style="flex:1;" onclick="fetchData()">❌ ยกเลิก</button>
                 </div>
             </div>
@@ -245,19 +248,19 @@
             qty: document.getElementById(`eQty${index}`).value,
             loc: document.getElementById(`eLoc${index}`).value
         };
-        if(!confirm('บันทึกการแก้ไข?')) return;
+        if(!confirm('ยืนยันการแก้ไขข้อมูล?')) return;
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
-            alert('สำเร็จ!'); fetchData();
-        } catch (e) { alert('พลาด'); }
+            alert('บันทึกสำเร็จ!'); fetchData();
+        } catch (e) { alert('เกิดข้อผิดพลาด'); }
     }
 
     async function deleteItem(index) {
-        if(!confirm('ลบรายการนี้?')) return;
+        if(!confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) return;
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', rowIndex: index + 2 }) });
-            alert('ลบแล้ว'); fetchData();
-        } catch (e) { alert('พลาด'); }
+            alert('ลบข้อมูลเรียบร้อย'); fetchData();
+        } catch (e) { alert('ไม่สามารถลบได้'); }
     }
 
     function openModal(itemIdx, imgIdx) {
@@ -270,16 +273,19 @@
             updateModalImage();
         }
     }
+    
     function updateModalImage() {
         document.getElementById('fullImage').src = currentImageSet[currentImageIndex];
         document.getElementById('imageCounter').innerText = `${currentImageIndex + 1} / ${currentImageSet.length}`;
     }
+    
     function changeSlide(n) {
         currentImageIndex += n;
         if (currentImageIndex >= currentImageSet.length) currentImageIndex = 0;
         if (currentImageIndex < 0) currentImageIndex = currentImageSet.length - 1;
         updateModalImage();
     }
+    
     function closeModal() { document.getElementById('imageModal').style.display = 'none'; }
 
     fetchData();

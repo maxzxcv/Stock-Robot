@@ -5,140 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เพิ่มสต็อก - Repairaf</title>
     <style>
+        /* รีเซ็ตพื้นฐาน */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            padding: 8px; 
-            background-color: #f4f6f8; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            padding: 12px; 
+            background-color: #f0f2f5; 
             margin: 0;
-            box-sizing: border-box;
-            color: #333;
+            color: #1c1e21;
         }
 
         .container { 
-            max-width: 450px; 
+            max-width: 500px; 
             margin: 0 auto; 
             background: white; 
-            padding: 15px 18px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08); 
         }
 
         h2 { 
             color: #2575fc; 
             text-align: center; 
-            margin: 0 0 15px 0;
-            font-size: 1.2rem; 
+            margin: 0 0 20px 0;
+            font-size: 1.4rem; 
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .form-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         .form-group { 
-            margin-bottom: 12px; 
+            margin-bottom: 15px; 
             flex: 1;
         }
         
         label { 
             display: block; 
-            margin-bottom: 4px; 
+            margin-bottom: 6px; 
             font-weight: 600; 
-            color: #666;
-            font-size: 13px;
+            color: #4b4f56;
+            font-size: 14px;
         }
         
+        /* ปรับขนาด Input ให้เหมาะกับนิ้วมือ (Touch Friendly) */
         input[type="text"], 
         input[type="number"], 
         input[type="date"], 
         select {
             width: 100%; 
-            height: 38px; /* ลดความสูงลง */
-            padding: 0 10px; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            box-sizing: border-box;
-            font-size: 15px; /* ขนาดกำลังดีสำหรับมือถือ */
+            height: 45px; 
+            padding: 0 12px; 
+            border: 1.5px solid #dddfe2; 
+            border-radius: 10px; 
+            font-size: 16px; /* ป้องกัน iOS Auto-zoom */
             outline: none;
-            background-color: #fff;
-            -webkit-appearance: none; 
+            background-color: #f5f6f7;
+            transition: all 0.2s;
         }
         
-        input[type="file"] {
-            width: 100%;
-            padding: 6px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border: 1px dashed #ccc;
-            font-size: 12px;
+        input:focus, select:focus {
+            border-color: #2575fc;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
         }
 
-        select:focus, input:focus { border-color: #2575fc; }
-        
+        /* ตกแต่งส่วนอัปโหลดไฟล์ */
+        .file-upload-wrapper {
+            position: relative;
+            background: #f0f2f5;
+            border: 2px dashed #ccd0d5;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            font-size: 14px;
+        }
+
         .btn-submit { 
             background: linear-gradient(135deg, #6a11cb, #2575fc); 
             color: white; 
             border: none; 
             width: 100%; 
-            padding: 12px; 
-            border-radius: 8px;
-            font-size: 16px; 
+            padding: 14px; 
+            border-radius: 12px;
+            font-size: 17px; 
             font-weight: bold; 
             cursor: pointer; 
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(37, 117, 252, 0.2);
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
+            transition: transform 0.1s, opacity 0.2s;
         }
 
-        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-submit:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
         
         .btn-back { 
             display: block; 
             text-align: center; 
-            margin-top: 15px; 
-            color: #999; 
+            margin-top: 20px; 
+            color: #606770; 
             text-decoration: none; 
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
+        /* พรีวิวรูปภาพแบบ Grid */
         #preview-container { 
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* เพิ่มเป็น 5 รูปต่อแถวเพื่อให้ดูเล็กลง */
-            gap: 5px; 
-            margin-top: 8px; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            margin-top: 12px; 
         }
 
         .preview-img-wrapper {
             position: relative;
             width: 100%;
             padding-top: 100%; 
+            background: #eee;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .preview-img { 
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
-            border-radius: 4px; 
-            border: 1px solid #eee; 
+        }
+
+        /* สำหรับหน้าจอเล็กมาก */
+        @media (max-width: 360px) {
+            .form-row { flex-direction: column; gap: 0; }
+            #preview-container { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📦 เพิ่มสต็อก</h2>
+    <h2>📦 เพิ่มสต็อกสินค้า</h2>
     <form id="addItemForm">
         <div class="form-row">
             <div class="form-group">
-                <label>วันที่รับเข้า</label>
+                <label>📅 วันที่รับเข้า</label>
                 <input type="date" id="itemDate" required>
             </div>
             <div class="form-group">
-                <label>หมวดหมู่</label>
+                <label>📁 หมวดหมู่</label>
                 <select id="itemCat" required>
                     <option value="" disabled selected>เลือก...</option>
                     <option value="drive 08">drive 08</option>
@@ -159,38 +183,41 @@
         </div>
 
         <div class="form-group">
-            <label>รหัสสินค้า</label>
-            <input type="text" id="itemId" placeholder="เช่น SKU-001" required>
+            <label>🆔 รหัสสินค้า (SKU/ID)</label>
+            <input type="text" id="itemId" placeholder="กรอกรหัสสินค้า" required>
         </div>
 
         <div class="form-group">
-            <label>อาการ</label>
-            <input type="text" id="itemName" placeholder="ระบุอาการเสีย" required>
+            <label>🔧 อาการ/รายละเอียด</label>
+            <input type="text" id="itemName" placeholder="ระบุอาการเสีย หรือข้อมูลเพิ่มเติม" required>
         </div>
 
         <div class="form-row">
             <div class="form-group" style="flex: 0.4;">
-                <label>จำนวน</label>
+                <label>🔢 จำนวน</label>
                 <input type="number" id="itemQty" value="1" min="1" required>
             </div>
             <div class="form-group">
-                <label>สถานที่เก็บ</label>
-                <input type="text" id="itemLoc" placeholder="เช่น ชั้น A1" required>
+                <label>📍 สถานที่เก็บ</label>
+                <input type="text" id="itemLoc" placeholder="เช่น ตู้ A ชั้น 2" required>
             </div>
         </div>
 
         <div class="form-group">
-            <label>รูปภาพสินค้า</label>
-            <input type="file" id="itemImages" accept="image/*" multiple onchange="previewImages()">
+            <label>📸 รูปภาพสินค้า</label>
+            <div class="file-upload-wrapper">
+                <input type="file" id="itemImages" accept="image/*" multiple onchange="previewImages()">
+            </div>
             <div id="preview-container"></div>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">🚀 บันทึกข้อมูล</button>
-        <a href="Search.html" class="btn-back">← กลับหน้าหลัก</a>
+        <button type="submit" class="btn-submit" id="submitBtn">🚀 บันทึกข้อมูลลงระบบ</button>
+        <a href="Search.html" class="btn-back">← กลับไปยังหน้าคลังสินค้า</a>
     </form>
 </div>
 
 <script>
+    // ตั้งค่าวันที่ปัจจุบันเป็น Default
     document.getElementById('itemDate').valueAsDate = new Date();
     let base64Images = [];
 
@@ -200,27 +227,33 @@
         container.innerHTML = '';
         base64Images = [];
 
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64String = e.target.result;
-                const wrapper = document.createElement('div');
-                wrapper.className = 'preview-img-wrapper';
-                const img = document.createElement('img');
-                img.src = base64String;
-                img.className = 'preview-img';
-                wrapper.appendChild(img);
-                container.appendChild(wrapper);
-                base64Images.push(base64String);
-            }
-            reader.readAsDataURL(file);
-        });
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'preview-img-wrapper';
+                    const img = document.createElement('img');
+                    img.src = base64String;
+                    img.className = 'preview-img';
+                    wrapper.appendChild(img);
+                    container.appendChild(wrapper);
+                    base64Images.push(base64String);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
     }
 
     document.getElementById('addItemForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
-        submitBtn.innerText = '⌛ บันทึก...';
+        
+        // ถามเพื่อความแน่ใจก่อนบันทึกบนมือถือ
+        if(!confirm('ยืนยันการบันทึกข้อมูลหรือไม่?')) return;
+
+        submitBtn.innerText = '⌛ กำลังบันทึกข้อมูล...';
         submitBtn.disabled = true;
 
         const formData = {
@@ -243,11 +276,12 @@
             body: JSON.stringify(formData)
         })
         .then(() => {
-            alert('🚀 บันทึกสำเร็จ!');
+            alert('🚀 บันทึกสำเร็จเรียบร้อยแล้ว!');
             window.location.href = 'Search.html'; 
         })
         .catch(error => {
-            alert('เกิดข้อผิดพลาด');
+            console.error('Error:', error);
+            alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
             submitBtn.innerText = '🚀 บันทึกข้อมูล';
             submitBtn.disabled = false;
         });
