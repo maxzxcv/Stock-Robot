@@ -5,37 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เพิ่มรายการซ่อมใหม่ - Repairaf</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #f0f2f5; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h2 { color: #2575fc; text-align: center; margin-bottom: 25px; }
+        /* ปรับพื้นฐานให้เหมาะกับมือถือ */
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            padding: 15px; 
+            background-color: #f0f2f5; 
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .container { 
+            max-width: 500px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; /* ลด padding ลงเล็กน้อยในมือถือ */
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+        }
+
+        h2 { 
+            color: #2575fc; 
+            text-align: center; 
+            margin-bottom: 20px;
+            font-size: 1.5rem; 
+        }
         
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group { margin-bottom: 18px; }
         
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #444;
+            font-size: 14px;
+        }
+        
+        /* ปรับ Input ให้กดง่ายขึ้นด้วยนิ้วมือ */
         input[type="text"], 
         input[type="number"], 
         input[type="date"], 
         input[type="file"],
         select {
             width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ddd; 
+            padding: 12px; /* เพิ่มความสูงเพื่อให้กดง่าย */
+            border: 1px solid #ccc; 
             border-radius: 8px; 
             box-sizing: border-box;
-            font-size: 15px;
+            font-size: 16px; /* ป้องกัน iPhone ซูมหน้าจอขณะพิมพ์ */
             outline: none;
+            background-color: #fff;
+            -webkit-appearance: none; /* ลบสไตล์เดิมของ Safari */
         }
         
-        select:focus, input:focus { border-color: #2575fc; }
+        select:focus, input:focus { border-color: #2575fc; box-shadow: 0 0 5px rgba(37,117,252,0.2); }
         
-        .btn-submit { background: #2575fc; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: #1a5fdb; }
-        
-        .btn-back { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; font-size: 14px; }
-        .btn-back:hover { color: #2575fc; }
+        .btn-submit { 
+            background: linear-gradient(135deg, #6a11cb, #2575fc); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 30px; /* ทำให้ปุ่มโค้งมนดูทันสมัย */
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+        }
 
-        #preview-container { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+        .btn-submit:active { transform: scale(0.98); opacity: 0.9; }
+        
+        .btn-back { 
+            display: block; 
+            text-align: center; 
+            margin-top: 20px; 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 15px;
+            padding: 10px;
+        }
+
+        /* ปรับปรุงส่วนแสดงรูปภาพตัวอย่าง */
+        #preview-container { 
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px; 
+            margin-top: 12px; 
+        }
+
+        .preview-img-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* ทำให้เป็นสี่เหลี่ยมจตุรัส */
+        }
+
+        .preview-img { 
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+        }
+
+        /* เพิ่มเติมสำหรับ Safari มือถือ */
+        input[type="file"] {
+            padding: 8px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -75,24 +152,26 @@
 
         <div class="form-group">
             <label>อาการ</label>
-            <input type="text" id="itemName" placeholder="ระบุอาการเสีย หรือ รายละเอียดสินค้า" required>
+            <input type="text" id="itemName" placeholder="ระบุอาการเสีย" required>
         </div>
 
         <div class="form-group">
             <label>จำนวน</label>
             <input type="number" id="itemQty" value="1" min="1" required>
         </div>
+
         <div class="form-group">
             <label>สถานที่เก็บ</label>
             <input type="text" id="itemLoc" placeholder="เช่น ชั้น A1, ตู้เก็บของ" required>
         </div>
+
         <div class="form-group">
             <label>รูปภาพสินค้า (เลือกได้หลายรูป)</label>
             <input type="file" id="itemImages" accept="image/*" multiple onchange="previewImages()">
             <div id="preview-container"></div>
         </div>
 
-        <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+        <button type="submit" class="btn-submit">🚀 บันทึกข้อมูล</button>
         <a href="Search.html" class="btn-back">← กลับหน้าค้นหา</a>
     </form>
 </div>
@@ -110,11 +189,18 @@
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = function(e) {
+                // เก็บเฉพาะข้อมูล base64 (ตัด data:image/...;base64, ออกเพื่อให้ไฟล์ไม่ใหญ่เกินไปถ้าต้องการ)
+                const base64String = e.target.result;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-img-wrapper';
                 const img = document.createElement('img');
-                img.src = e.target.result;
+                img.src = base64String;
                 img.className = 'preview-img';
-                container.appendChild(img);
-                base64Images.push(e.target.result);
+                
+                wrapper.appendChild(img);
+                container.appendChild(wrapper);
+                base64Images.push(base64String);
             }
             reader.readAsDataURL(file);
         });
@@ -122,25 +208,45 @@
 
     document.getElementById('addItemForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // แสดงสถานะกำลังบันทึก
+        const submitBtn = e.target.querySelector('.btn-submit');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = '⌛ กำลังบันทึก...';
+        submitBtn.disabled = true;
 
-        const newItem = {
+        const formData = {
             date: document.getElementById('itemDate').value,
             cat: document.getElementById('itemCat').value,
             id: document.getElementById('itemId').value,
             name: document.getElementById('itemName').value,
             qty: document.getElementById('itemQty').value,
             loc: document.getElementById('itemLoc').value,
-            imgs: base64Images
+            imgs: JSON.stringify(base64Images) // แปลง Array รูปภาพเป็น String
         };
 
-        let stockData = JSON.parse(localStorage.getItem('myStock')) || [];
-        stockData.push(newItem);
-        localStorage.setItem('myStock', JSON.stringify(stockData));
+        // URL ของ Google Apps Script ที่คุณให้มา
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
 
-        alert('บันทึกข้อมูลเรียบร้อยแล้ว!');
-        
-        // แก้ไขจุดที่ 2: เปลี่ยนคำสั่ง redirect ให้ไปที่หน้า Search.html
-        window.location.href = 'Search.html'; 
+        // ส่งข้อมูลไปยัง Google Sheets
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // สำคัญ: ป้องกันปัญหา CORS
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+        .then(() => {
+            alert('🚀 บันทึกข้อมูลลง Google Sheets เรียบร้อยแล้ว!');
+            // ล้างฟอร์มหรือเปลี่ยนหน้า
+            window.location.href = 'Search.html'; 
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        });
     });
 </script>
 
