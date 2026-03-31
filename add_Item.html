@@ -3,125 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>เพิ่มรายการสต็อก - Repairaf</title>
+    <title>เพิ่มสต็อก - Repairaf</title>
     <style>
-        /* ปรับพื้นฐานให้เหมาะกับมือถือแนวตั้ง */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            padding: 10px; 
-            background-color: #f8f9fa; 
+            padding: 8px; 
+            background-color: #f4f6f8; 
             margin: 0;
             box-sizing: border-box;
             color: #333;
         }
 
         .container { 
-            max-width: 500px; 
-            margin: 5px auto; 
+            max-width: 450px; 
+            margin: 0 auto; 
             background: white; 
-            padding: 25px 20px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            padding: 15px 18px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
 
         h2 { 
             color: #2575fc; 
             text-align: center; 
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 1.4rem; 
+            margin: 0 0 15px 0;
+            font-size: 1.2rem; 
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
         
-        .form-group { margin-bottom: 20px; }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .form-group { 
+            margin-bottom: 12px; 
+            flex: 1;
+        }
         
         label { 
             display: block; 
-            margin-bottom: 8px; 
+            margin-bottom: 4px; 
             font-weight: 600; 
-            color: #555;
-            font-size: 14px;
+            color: #666;
+            font-size: 13px;
         }
         
-        /* ปรับ Input ให้เหมาะกับนิ้วสัมผัส และป้องกัน iOS Auto-zoom */
         input[type="text"], 
         input[type="number"], 
         input[type="date"], 
         select {
             width: 100%; 
-            height: 48px; /* ความสูงมาตรฐานสำหรับการกดง่าย */
-            padding: 0 15px; 
-            border: 1.5px solid #e0e0e0; 
-            border-radius: 10px; 
+            height: 38px; /* ลดความสูงลง */
+            padding: 0 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
             box-sizing: border-box;
-            font-size: 16px; /* สำคัญ: ต้อง 16px ขึ้นไปสำหรับ iOS */
+            font-size: 15px; /* ขนาดกำลังดีสำหรับมือถือ */
             outline: none;
             background-color: #fff;
-            transition: border-color 0.3s;
             -webkit-appearance: none; 
         }
         
-        /* สไตล์พิเศษสำหรับช่องอัปโหลดไฟล์ */
         input[type="file"] {
             width: 100%;
-            padding: 10px;
-            background: #f1f3f5;
-            border-radius: 10px;
-            border: 1px dashed #adb5bd;
-            font-size: 14px;
+            padding: 6px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px dashed #ccc;
+            font-size: 12px;
         }
 
-        select:focus, input:focus { 
-            border-color: #2575fc; 
-            background-color: #fff;
-        }
+        select:focus, input:focus { border-color: #2575fc; }
         
         .btn-submit { 
             background: linear-gradient(135deg, #6a11cb, #2575fc); 
             color: white; 
             border: none; 
             width: 100%; 
-            padding: 16px; 
-            border-radius: 12px;
-            font-size: 17px; 
+            padding: 12px; 
+            border-radius: 8px;
+            font-size: 16px; 
             font-weight: bold; 
             cursor: pointer; 
-            transition: all 0.3s; 
-            margin-top: 15px;
-            box-shadow: 0 6px 15px rgba(37, 117, 252, 0.25);
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(37, 117, 252, 0.2);
         }
 
-        .btn-submit:active { 
-            transform: scale(0.97); 
-            opacity: 0.9; 
-        }
-
-        .btn-submit:disabled {
-            background: #ccc;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        .btn-submit:active { transform: scale(0.98); }
         
         .btn-back { 
             display: block; 
             text-align: center; 
-            margin-top: 25px; 
-            color: #888; 
+            margin-top: 15px; 
+            color: #999; 
             text-decoration: none; 
-            font-size: 14px;
-            padding: 10px;
-            border: 1px solid transparent;
+            font-size: 13px;
         }
 
-        /* ปรับปรุง Grid แสดงรูปภาพให้ดูดีในแนวตั้ง */
         #preview-container { 
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 รูปต่อแถวในมือถือ */
-            gap: 8px; 
-            margin-top: 12px; 
+            grid-template-columns: repeat(5, 1fr); /* เพิ่มเป็น 5 รูปต่อแถวเพื่อให้ดูเล็กลง */
+            gap: 5px; 
+            margin-top: 8px; 
         }
 
         .preview-img-wrapper {
@@ -134,46 +122,40 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
-            border-radius: 8px; 
+            border-radius: 4px; 
             border: 1px solid #eee; 
-        }
-
-        /* Media Query สำหรับหน้าจอที่เล็กมากๆ */
-        @media (max-width: 380px) {
-            .container { padding: 20px 15px; }
-            h2 { font-size: 1.2rem; }
-            #preview-container { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📦 เพิ่มรายการเข้าสต็อก</h2>
+    <h2>📦 เพิ่มสต็อก</h2>
     <form id="addItemForm">
-        <div class="form-group">
-            <label>วันที่รับเข้า</label>
-            <input type="date" id="itemDate" required>
-        </div>
-
-        <div class="form-group">
-            <label>หมวดหมู่สินค้า</label>
-            <select id="itemCat" required>
-                <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
-                <option value="drive 08">drive 08</option>
-                <option value="drive 16">drive 16</option>
-                <option value="drive 32">drive 32</option>
-                <option value="drive 48">drive 48</option>
-                <option value="drive 64">drive 64</option>
-                <option value="KPS">KPS</option>
-                <option value="MFC">MFC</option>
-                <option value="DSE">DSE</option>
-                <option value="Safety95">Safety95</option>
-                <option value="SafetyXP">SafetyXP</option>
-                <option value="Com95">Com95</option>
-                <option value="ComXP">ComXP</option>
-                <option value="การ์ดจอ">การ์ดจอ</option>
-            </select>
+        <div class="form-row">
+            <div class="form-group">
+                <label>วันที่รับเข้า</label>
+                <input type="date" id="itemDate" required>
+            </div>
+            <div class="form-group">
+                <label>หมวดหมู่</label>
+                <select id="itemCat" required>
+                    <option value="" disabled selected>เลือก...</option>
+                    <option value="drive 08">drive 08</option>
+                    <option value="drive 16">drive 16</option>
+                    <option value="drive 32">drive 32</option>
+                    <option value="drive 48">drive 48</option>
+                    <option value="drive 64">drive 64</option>
+                    <option value="KPS">KPS</option>
+                    <option value="MFC">MFC</option>
+                    <option value="DSE">DSE</option>
+                    <option value="Safety95">Safety95</option>
+                    <option value="SafetyXP">SafetyXP</option>
+                    <option value="Com95">Com95</option>
+                    <option value="ComXP">ComXP</option>
+                    <option value="การ์ดจอ">การ์ดจอ</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group">
@@ -186,18 +168,19 @@
             <input type="text" id="itemName" placeholder="ระบุอาการเสีย" required>
         </div>
 
-        <div class="form-group">
-            <label>จำนวน</label>
-            <input type="number" id="itemQty" value="1" min="1" required>
+        <div class="form-row">
+            <div class="form-group" style="flex: 0.4;">
+                <label>จำนวน</label>
+                <input type="number" id="itemQty" value="1" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>สถานที่เก็บ</label>
+                <input type="text" id="itemLoc" placeholder="เช่น ชั้น A1" required>
+            </div>
         </div>
 
         <div class="form-group">
-            <label>สถานที่เก็บ</label>
-            <input type="text" id="itemLoc" placeholder="เช่น ชั้น A1, ตู้เก็บของ" required>
-        </div>
-
-        <div class="form-group">
-            <label>รูปภาพสินค้า (เลือกได้หลายรูป)</label>
+            <label>รูปภาพสินค้า</label>
             <input type="file" id="itemImages" accept="image/*" multiple onchange="previewImages()">
             <div id="preview-container"></div>
         </div>
@@ -208,11 +191,9 @@
 </div>
 
 <script>
-    // ตั้งค่าวันที่ปัจจุบัน
     document.getElementById('itemDate').valueAsDate = new Date();
     let base64Images = [];
 
-    // ฟังก์ชันแสดงตัวอย่างรูปภาพ
     function previewImages() {
         const files = document.getElementById('itemImages').files;
         const container = document.getElementById('preview-container');
@@ -223,13 +204,11 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64String = e.target.result;
-                
                 const wrapper = document.createElement('div');
                 wrapper.className = 'preview-img-wrapper';
                 const img = document.createElement('img');
                 img.src = base64String;
                 img.className = 'preview-img';
-                
                 wrapper.appendChild(img);
                 container.appendChild(wrapper);
                 base64Images.push(base64String);
@@ -238,13 +217,10 @@
         });
     }
 
-    // ฟังก์ชันส่งฟอร์ม
     document.getElementById('addItemForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const submitBtn = document.getElementById('submitBtn');
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = '⌛ กำลังบันทึก...';
+        submitBtn.innerText = '⌛ บันทึก...';
         submitBtn.disabled = true;
 
         const formData = {
@@ -267,13 +243,12 @@
             body: JSON.stringify(formData)
         })
         .then(() => {
-            alert('🚀 บันทึกข้อมูลสำเร็จ!');
+            alert('🚀 บันทึกสำเร็จ!');
             window.location.href = 'Search.html'; 
         })
         .catch(error => {
-            console.error('Error!', error.message);
-            alert('เกิดข้อผิดพลาด: ' + error.message);
-            submitBtn.innerText = originalText;
+            alert('เกิดข้อผิดพลาด');
+            submitBtn.innerText = '🚀 บันทึกข้อมูล';
             submitBtn.disabled = false;
         });
     });
