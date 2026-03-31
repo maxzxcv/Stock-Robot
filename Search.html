@@ -5,64 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>คลังสินค้า - Repairaf</title>
     <style>
-        /* สไตล์พื้นฐาน */
+        /* --- สไตล์พื้นฐาน (Desktop & General) --- */
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f0f2f5; margin: 0; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        /* Header ปรับให้ซ้อนกันในมือถือ */
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
         h2 { color: #2575fc; margin: 0; font-size: 1.5rem; }
         
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; cursor: pointer; border: none; white-space: nowrap; font-size: 14px; }
+        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 12px 18px; border-radius: 8px; font-weight: bold; transition: 0.3s; cursor: pointer; border: none; white-space: nowrap; font-size: 14px; text-align: center; }
         .btn-nav:hover { background: #218838; }
 
         /* ส่วนค้นหา */
         .filter-section { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .search-box { flex: 2; min-width: 200px; padding: 12px; border: 2px solid #2575fc; border-radius: 8px; font-size: 16px; outline: none; }
+        .search-box { flex: 2; min-width: 200px; padding: 12px; border: 2px solid #2575fc; border-radius: 8px; font-size: 16px; outline: none; box-sizing: border-box; }
         .category-filter { flex: 1; min-width: 150px; padding: 12px; border: 2px solid #2575fc; border-radius: 8px; font-size: 16px; background: white; cursor: pointer; }
 
-        /* ตาราง - ทำให้ Scroll แนวนอนได้ในคอม */
+        /* ตาราง Desktop */
         .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background-color: #2575fc; color: white; white-space: nowrap; }
         
-        /* สไตล์ปุ่มและสถานะ */
-        .btn-show-img { background: #6a11cb; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px; }
-        .btn-edit { background: #ffc107; color: black; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 2px; }
-        .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .edit-input { width: 100%; padding: 8px; border: 1px solid #2575fc; border-radius: 4px; box-sizing: border-box; margin-bottom: 5px; font-size: 14px; }
+        /* ปุ่มจัดการ */
+        .btn-show-img { background: #6a11cb; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; }
+        .btn-edit { background: #ffc107; color: black; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; }
+        .action-buttons { display: flex; gap: 5px; width: 100%; }
 
-        /* ปรับปรุงการแสดงผลรูปภาพแก้ไข */
-        .edit-img-preview-container { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
-        .edit-img-item { position: relative; display: inline-block; }
-        .edit-img-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
-        .btn-remove-img { position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        /* Modal รูปภาพ - ปรับให้พอดีหน้าจอมือถือ */
-        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
-        .modal-content-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 95%; height: 80%; }
-        .modal-content { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; }
+        /* Modal รูปภาพ */
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        .modal-content-wrapper { position: relative; width: 95%; height: 80%; display: flex; align-items: center; justify-content: center; }
+        .modal-content { max-width: 100%; max-height: 100%; object-fit: contain; }
         .close-modal { position: absolute; top: -50px; right: 0; color: white; font-size: 40px; cursor: pointer; }
-        .prev, .next { cursor: pointer; position: absolute; top: 50%; padding: 12px; color: white; font-weight: bold; font-size: 30px; background-color: rgba(0,0,0,0.5); border: none; border-radius: 50%; user-select: none; }
-        .next { right: 5px; } .prev { left: 5px; }
-        .numbertext { color: #f2f2f2; font-size: 14px; position: absolute; top: -40px; left: 10px; }
-
-        /* Media Query สำหรับโทรศัพท์หน้าจอเล็ก */
+        
+        /* --- สำหรับโทรศัพท์แนวตั้ง (Mobile Vertical) --- */
         @media screen and (max-width: 600px) {
-            .header-flex { flex-direction: column; align-items: flex-start; }
-            .btn-nav { width: 100%; text-align: center; }
+            body { padding: 5px; }
+            .container { padding: 15px; border-radius: 0; }
+            .header-flex { flex-direction: column; align-items: stretch; }
+            .btn-nav { width: 100%; font-size: 16px; padding: 15px; }
             
-            /* เปลี่ยนตารางเป็นแบบ Card เพื่อให้อ่านง่ายในมือถือ */
+            /* เปลี่ยนตารางเป็น Card */
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { border: 1px solid #ccc; margin-bottom: 15px; border-radius: 8px; background: #fff; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-            td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 40%; padding-top: 10px; padding-bottom: 10px; min-height: 30px; }
+            tr { 
+                border: 1px solid #ddd; 
+                margin-bottom: 20px; 
+                border-radius: 12px; 
+                background: #fff; 
+                padding: 10px; 
+                box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            }
+            td { 
+                border: none; 
+                border-bottom: 1px solid #f9f9f9; 
+                position: relative; 
+                padding: 12px 10px 12px 45%; 
+                font-size: 15px;
+                min-height: 25px;
+            }
             td:last-child { border-bottom: none; }
-            td:before { position: absolute; left: 10px; width: 35%; padding-right: 10px; white-space: nowrap; font-weight: bold; color: #2575fc; content: attr(data-label); }
             
-            .edit-input { width: 100%; }
-            .btn-show-img { width: 100%; justify-content: center; }
+            /* หัวข้อจำลองใน Card */
+            td:before { 
+                position: absolute; 
+                left: 10px; 
+                width: 40%; 
+                padding-right: 10px; 
+                white-space: nowrap; 
+                font-weight: bold; 
+                color: #2575fc; 
+                content: attr(data-label); 
+            }
+
+            /* ปรับแต่ง input แก้ไขในมือถือ */
+            .edit-input { 
+                width: 100%; 
+                padding: 10px; 
+                margin-bottom: 8px; 
+                border: 1px solid #2575fc; 
+                border-radius: 6px; 
+                box-sizing: border-box;
+                font-size: 16px; /* กันซูม */
+            }
+            
+            .action-buttons { margin-top: 10px; gap: 10px; }
+            .btn-edit, .btn-delete { padding: 12px; font-size: 15px; }
         }
     </style>
 </head>
@@ -91,7 +119,7 @@
             <option value="ComXP">ComXP</option>
             <option value="การ์ดจอ">การ์ดจอ</option>
         </select>
-        <input type="text" id="searchInput" class="search-box" onkeyup="renderTable()" placeholder="🔍 ค้นหา...">
+        <input type="text" id="searchInput" class="search-box" onkeyup="renderTable()" placeholder="🔍 ค้นหา รหัส, อาการ, ที่เก็บ...">
     </div>
 
     <div class="table-responsive">
@@ -116,34 +144,31 @@
 <div id="imageModal" class="modal">
     <div class="modal-content-wrapper">
         <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div class="numbertext" id="imageCounter">1 / 1</div>
-        <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+        <div id="imageCounter" style="position:absolute; top:-40px; left:10px; color:white;">1 / 1</div>
+        <button onclick="changeSlide(-1)" style="position:absolute; left:0; background:none; border:none; color:white; font-size:40px; cursor:pointer;">&#10094;</button>
         <img class="modal-content" id="fullImage">
-        <button class="next" onclick="changeSlide(1)">&#10095;</button>
+        <button onclick="changeSlide(1)" style="position:absolute; right:0; background:none; border:none; color:white; font-size:40px; cursor:pointer;">&#10095;</button>
     </div>
 </div>
 
 <script>
-    // URL ของ Google Apps Script ของคุณ
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
     
-    let stockData = []; // เปลี่ยนจาก localStorage เป็น Array ว่างเพื่อรอรับข้อมูลจาก Server
+    let stockData = []; 
     let currentImageSet = [];
     let currentImageIndex = 0;
     let tempEditImgs = [];
 
-    // 1. ฟังก์ชันดึงข้อมูลจาก Google Sheets (โหลดเมื่อเปิดหน้าเว็บ)
     async function fetchData() {
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">⌛ กำลังโหลดข้อมูล...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:50px;">⌛ กำลังโหลดข้อมูลคลังสินค้า...</td></tr>';
         
         try {
             const response = await fetch(scriptURL);
             stockData = await response.json();
             renderTable();
         } catch (error) {
-            console.error('Error fetching data:', error);
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">❌ ไม่สามารถโหลดข้อมูลได้</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding:50px;">❌ โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรชหน้าจอ</td></tr>';
         }
     }
 
@@ -161,16 +186,13 @@
 
             if (matchText && matchCat) {
                 const tr = document.createElement('tr');
-                // ตรวจสอบว่า imgs เป็น Array หรือ String JSON
                 let images = [];
-                try {
-                    images = typeof item.imgs === 'string' ? JSON.parse(item.imgs) : (item.imgs || []);
-                } catch(e) { images = []; }
+                try { images = typeof item.imgs === 'string' ? JSON.parse(item.imgs) : (item.imgs || []); } catch(e) { images = []; }
                 
                 const imgCount = images.length;
                 let photoCell = imgCount > 0 
-                    ? `<button class="btn-show-img" onclick="openModal(${index}, 0)">🖼️ ดูรูป (${imgCount})</button>`
-                    : `<span class="no-img">ไม่มีรูป</span>`;
+                    ? `<button class="btn-show-img" onclick="openModal(${index}, 0)">🖼️ ดูรูปภาพ (${imgCount})</button>`
+                    : `<span style="color:#999; font-size:13px;">ไม่มีรูปภาพ</span>`;
 
                 tr.innerHTML = `
                     <td data-label="วันที่">${item.date}</td>
@@ -180,8 +202,10 @@
                     <td data-label="จำนวน">${item.qty}</td>
                     <td data-label="ที่เก็บ">${item.loc}</td>
                     <td data-label="จัดการ">
-                        <button class="btn-edit" onclick="editRow(${index})">แก้ไข</button>
-                        <button class="btn-delete" onclick="deleteItem(${index})">ลบ</button>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="editRow(${index})">แก้ไข</button>
+                            <button class="btn-delete" onclick="deleteItem(${index})">ลบ</button>
+                        </div>
                     </td>
                     <td data-label="รูปภาพ">${photoCell}</td>
                 `;
@@ -190,15 +214,11 @@
         });
     }
 
-    // 2. ฟังก์ชันบันทึกการแก้ไข (ส่งข้อมูลไป GAS)
+    // --- ฟังก์ชันจัดการข้อมูล (Save / Delete) ---
     async function saveEdit(index) {
-        const btn = event.target;
-        btn.innerText = '⌛...';
-        btn.disabled = true;
-
         const updatedItem = {
-            action: 'update', // เพิ่มตัวระบุ action สำหรับฝั่ง Script
-            rowIndex: index + 2, // +2 เพราะแถวแรกเป็น Header และ Index เริ่มที่ 0
+            action: 'update',
+            rowIndex: index + 2,
             date: document.getElementById(`eDate${index}`).value,
             cat: document.getElementById(`eCat${index}`).value,
             id: document.getElementById(`eId${index}`).value,
@@ -208,44 +228,27 @@
             imgs: JSON.stringify(tempEditImgs)
         };
 
+        if(!confirm('ยืนยันการบันทึกการแก้ไข?')) return;
+
+        alert('กำลังบันทึก... กรุณารอสักครู่');
         try {
-            await fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(updatedItem)
-            });
-            alert('อัปเดตข้อมูลเรียบร้อย!');
-            fetchData(); // โหลดข้อมูลใหม่
-        } catch (error) {
-            alert('เกิดข้อผิดพลาดในการบันทึก');
-            btn.innerText = 'บันทึก';
-            btn.disabled = false;
-        }
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
+            alert('บันทึกสำเร็จ!');
+            fetchData();
+        } catch (e) { alert('เกิดข้อผิดพลาด'); }
     }
 
-    // 3. ฟังก์ชันลบข้อมูล
     async function deleteItem(index) {
-        if(confirm('ยืนยันการลบข้อมูลแถวนี้อย่างถาวร?')) {
-            const deleteData = {
-                action: 'delete',
-                rowIndex: index + 2
-            };
-
-            try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(deleteData)
-                });
-                alert('ลบข้อมูลเรียบร้อย!');
-                fetchData();
-            } catch (error) {
-                alert('ไม่สามารถลบข้อมูลได้');
-            }
-        }
+        if(!confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) return;
+        const deleteData = { action: 'delete', rowIndex: index + 2 };
+        try {
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(deleteData) });
+            alert('ลบข้อมูลแล้ว');
+            fetchData();
+        } catch (e) { alert('ลบไม่สำเร็จ'); }
     }
 
-    // ฟังก์ชันจัดการรูปภาพ (เหมือนเดิม)
+    // --- ส่วนแสดงการแก้ไข (Inline Edit) ---
     function editRow(index) {
         const item = stockData[index];
         let images = [];
@@ -254,16 +257,58 @@
         
         const rows = document.getElementById('tableBody').rows;
         let targetRow;
-        for(let r of rows) {
-            if(r.innerHTML.includes(`editRow(${index})`)) targetRow = r;
-        }
-        renderEditRow(targetRow, index, item);
+        for(let r of rows) { if(r.innerHTML.includes(`editRow(${index})`)) targetRow = r; }
+        
+        targetRow.innerHTML = `
+            <td data-label="วันที่"><input type="date" id="eDate${index}" class="edit-input" value="${item.date}"></td>
+            <td data-label="หมวดหมู่"><input type="text" id="eCat${index}" class="edit-input" value="${item.cat}"></td>
+            <td data-label="รหัส"><input type="text" id="eId${index}" class="edit-input" value="${item.id}"></td>
+            <td data-label="อาการ"><input type="text" id="eName${index}" class="edit-input" value="${item.name}"></td>
+            <td data-label="จำนวน"><input type="number" id="eQty${index}" class="edit-input" value="${item.qty}"></td>
+            <td data-label="ที่เก็บ"><input type="text" id="eLoc${index}" class="edit-input" value="${item.loc}"></td>
+            <td data-label="จัดการ">
+                <div class="action-buttons">
+                    <button class="btn-nav" style="background:#007bff; width:100%;" onclick="saveEdit(${index})">✅ ตกลง</button>
+                    <button class="btn-delete" onclick="fetchData()">❌ ยกเลิก</button>
+                </div>
+            </td>
+            <td data-label="รูปภาพ">
+                <p style="font-size:12px; color:red;">* แก้ไขรูปภาพในหน้าเพิ่มสินค้า</p>
+            </td>
+        `;
     }
 
-    // ... (ฟังก์ชัน renderEditRow, handleEditFiles, modal อื่นๆ คงเดิมตามโค้ดต้นฉบับของคุณ) ...
+    // --- ส่วนจัดการ Modal รูปภาพ ---
+    function openModal(itemIdx, imgIdx) {
+        let images = [];
+        try { 
+            images = typeof stockData[itemIdx].imgs === 'string' 
+                ? JSON.parse(stockData[itemIdx].imgs) 
+                : (stockData[itemIdx].imgs || []); 
+        } catch(e) {}
+        
+        currentImageSet = images;
+        currentImageIndex = imgIdx;
+        if (currentImageSet.length > 0) {
+            document.getElementById('imageModal').style.display = 'flex';
+            updateModalImage();
+        }
+    }
+    function updateModalImage() {
+        document.getElementById('fullImage').src = currentImageSet[currentImageIndex];
+        document.getElementById('imageCounter').innerText = `${currentImageIndex + 1} / ${currentImageSet.length}`;
+    }
+    function changeSlide(n) {
+        currentImageIndex += n;
+        if (currentImageIndex >= currentImageSet.length) currentImageIndex = 0;
+        if (currentImageIndex < 0) currentImageIndex = currentImageSet.length - 1;
+        updateModalImage();
+    }
+    function closeModal() { document.getElementById('imageModal').style.display = 'none'; }
 
-    // เริ่มต้นดึงข้อมูลเมื่อโหลดหน้า
+    // เริ่มทำงาน
     fetchData();
 </script>
+
 </body>
 </html>

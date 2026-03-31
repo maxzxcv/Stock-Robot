@@ -2,102 +2,132 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เพิ่มรายการซ่อมใหม่ - Repairaf</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เพิ่มรายการสต็อก - Repairaf</title>
     <style>
-        /* ปรับพื้นฐานให้เหมาะกับมือถือ */
+        /* ปรับพื้นฐานให้เหมาะกับมือถือแนวตั้ง */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            padding: 15px; 
-            background-color: #f0f2f5; 
+            padding: 10px; 
+            background-color: #f8f9fa; 
             margin: 0;
             box-sizing: border-box;
+            color: #333;
         }
 
         .container { 
             max-width: 500px; 
-            margin: auto; 
+            margin: 5px auto; 
             background: white; 
-            padding: 20px; /* ลด padding ลงเล็กน้อยในมือถือ */
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+            padding: 25px 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
         }
 
         h2 { 
             color: #2575fc; 
             text-align: center; 
-            margin-bottom: 20px;
-            font-size: 1.5rem; 
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.4rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
-        .form-group { margin-bottom: 18px; }
+        .form-group { margin-bottom: 20px; }
         
         label { 
             display: block; 
             margin-bottom: 8px; 
-            font-weight: bold; 
-            color: #444;
+            font-weight: 600; 
+            color: #555;
             font-size: 14px;
         }
         
-        /* ปรับ Input ให้กดง่ายขึ้นด้วยนิ้วมือ */
+        /* ปรับ Input ให้เหมาะกับนิ้วสัมผัส และป้องกัน iOS Auto-zoom */
         input[type="text"], 
         input[type="number"], 
         input[type="date"], 
-        input[type="file"],
         select {
             width: 100%; 
-            padding: 12px; /* เพิ่มความสูงเพื่อให้กดง่าย */
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
+            height: 48px; /* ความสูงมาตรฐานสำหรับการกดง่าย */
+            padding: 0 15px; 
+            border: 1.5px solid #e0e0e0; 
+            border-radius: 10px; 
             box-sizing: border-box;
-            font-size: 16px; /* ป้องกัน iPhone ซูมหน้าจอขณะพิมพ์ */
+            font-size: 16px; /* สำคัญ: ต้อง 16px ขึ้นไปสำหรับ iOS */
             outline: none;
             background-color: #fff;
-            -webkit-appearance: none; /* ลบสไตล์เดิมของ Safari */
+            transition: border-color 0.3s;
+            -webkit-appearance: none; 
         }
         
-        select:focus, input:focus { border-color: #2575fc; box-shadow: 0 0 5px rgba(37,117,252,0.2); }
+        /* สไตล์พิเศษสำหรับช่องอัปโหลดไฟล์ */
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 10px;
+            border: 1px dashed #adb5bd;
+            font-size: 14px;
+        }
+
+        select:focus, input:focus { 
+            border-color: #2575fc; 
+            background-color: #fff;
+        }
         
         .btn-submit { 
             background: linear-gradient(135deg, #6a11cb, #2575fc); 
             color: white; 
             border: none; 
             width: 100%; 
-            padding: 15px; 
-            border-radius: 30px; /* ทำให้ปุ่มโค้งมนดูทันสมัย */
-            font-size: 18px; 
+            padding: 16px; 
+            border-radius: 12px;
+            font-size: 17px; 
             font-weight: bold; 
             cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+            transition: all 0.3s; 
+            margin-top: 15px;
+            box-shadow: 0 6px 15px rgba(37, 117, 252, 0.25);
         }
 
-        .btn-submit:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-submit:active { 
+            transform: scale(0.97); 
+            opacity: 0.9; 
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
         
         .btn-back { 
             display: block; 
             text-align: center; 
-            margin-top: 20px; 
-            color: #666; 
+            margin-top: 25px; 
+            color: #888; 
             text-decoration: none; 
-            font-size: 15px;
+            font-size: 14px;
             padding: 10px;
+            border: 1px solid transparent;
         }
 
-        /* ปรับปรุงส่วนแสดงรูปภาพตัวอย่าง */
+        /* ปรับปรุง Grid แสดงรูปภาพให้ดูดีในแนวตั้ง */
         #preview-container { 
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 10px; 
+            grid-template-columns: repeat(4, 1fr); /* 4 รูปต่อแถวในมือถือ */
+            gap: 8px; 
             margin-top: 12px; 
         }
 
         .preview-img-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 100%; /* ทำให้เป็นสี่เหลี่ยมจตุรัส */
+            padding-top: 100%; 
         }
 
         .preview-img { 
@@ -105,13 +135,14 @@
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
             border-radius: 8px; 
-            border: 1px solid #ddd; 
+            border: 1px solid #eee; 
         }
 
-        /* เพิ่มเติมสำหรับ Safari มือถือ */
-        input[type="file"] {
-            padding: 8px;
-            font-size: 14px;
+        /* Media Query สำหรับหน้าจอที่เล็กมากๆ */
+        @media (max-width: 380px) {
+            .container { padding: 20px 15px; }
+            h2 { font-size: 1.2rem; }
+            #preview-container { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -171,15 +202,17 @@
             <div id="preview-container"></div>
         </div>
 
-        <button type="submit" class="btn-submit">🚀 บันทึกข้อมูล</button>
-        <a href="Search.html" class="btn-back">← กลับหน้าค้นหา</a>
+        <button type="submit" class="btn-submit" id="submitBtn">🚀 บันทึกข้อมูล</button>
+        <a href="Search.html" class="btn-back">← กลับหน้าหลัก</a>
     </form>
 </div>
 
 <script>
+    // ตั้งค่าวันที่ปัจจุบัน
     document.getElementById('itemDate').valueAsDate = new Date();
     let base64Images = [];
 
+    // ฟังก์ชันแสดงตัวอย่างรูปภาพ
     function previewImages() {
         const files = document.getElementById('itemImages').files;
         const container = document.getElementById('preview-container');
@@ -189,7 +222,6 @@
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // เก็บเฉพาะข้อมูล base64 (ตัด data:image/...;base64, ออกเพื่อให้ไฟล์ไม่ใหญ่เกินไปถ้าต้องการ)
                 const base64String = e.target.result;
                 
                 const wrapper = document.createElement('div');
@@ -206,11 +238,11 @@
         });
     }
 
+    // ฟังก์ชันส่งฟอร์ม
     document.getElementById('addItemForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // แสดงสถานะกำลังบันทึก
-        const submitBtn = e.target.querySelector('.btn-submit');
+        const submitBtn = document.getElementById('submitBtn');
         const originalText = submitBtn.innerText;
         submitBtn.innerText = '⌛ กำลังบันทึก...';
         submitBtn.disabled = true;
@@ -222,28 +254,25 @@
             name: document.getElementById('itemName').value,
             qty: document.getElementById('itemQty').value,
             loc: document.getElementById('itemLoc').value,
-            imgs: JSON.stringify(base64Images) // แปลง Array รูปภาพเป็น String
+            imgs: JSON.stringify(base64Images)
         };
 
-        // URL ของ Google Apps Script ที่คุณให้มา
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
 
-        // ส่งข้อมูลไปยัง Google Sheets
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // สำคัญ: ป้องกันปัญหา CORS
+            mode: 'no-cors',
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         })
         .then(() => {
-            alert('🚀 บันทึกข้อมูลลง Google Sheets เรียบร้อยแล้ว!');
-            // ล้างฟอร์มหรือเปลี่ยนหน้า
+            alert('🚀 บันทึกข้อมูลสำเร็จ!');
             window.location.href = 'Search.html'; 
         })
         .catch(error => {
             console.error('Error!', error.message);
-            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            alert('เกิดข้อผิดพลาด: ' + error.message);
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
         });
