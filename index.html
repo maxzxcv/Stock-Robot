@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Repair Stock</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* พื้นหลังไล่เฉดสีให้ดูทันสมัย */
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            object-fit: contain;
+            border-radius: 50%; /* ถ้าโลโก้เป็นวงกลม */
+            background: white;
+            padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: block; /* ปรับให้เป็นปุ่มเต็มความกว้าง */
+            padding: 15px;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #2575fc;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <img src="Logo.jpg" alt="logo" onerror="this.src='https://via.placeholder.com/100?text=NP+Robotics'">
+
+    <div class="title">ยินดีต้อนรับ</div>
+    <div class="subtitle">Stock Robot Repair</div>
+
+    <a href="Search.html" class="btn">🚀 เริ่มต้นใช้งาน</a>
+
+    <div class="footer">
+        บริษัท เอ็น.พี. โรโบติกส์ แอนด์ โซลูชั่น จำกัด <br>
+        <small>© 2026 All Rights Reserved</small>
+    </div>
+</div>
+
+</body>
+</html>

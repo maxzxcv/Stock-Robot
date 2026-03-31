@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มรายการซ่อมใหม่ - Repairaf</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #f0f2f5; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h2 { color: #2575fc; text-align: center; margin-bottom: 25px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        
+        input[type="text"], 
+        input[type="number"], 
+        input[type="date"], 
+        input[type="file"],
+        select {
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box;
+            font-size: 15px;
+            outline: none;
+        }
+        
+        select:focus, input:focus { border-color: #2575fc; }
+        
+        .btn-submit { background: #2575fc; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #1a5fdb; }
+        
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; font-size: 14px; }
+        .btn-back:hover { color: #2575fc; }
+
+        #preview-container { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📦 เพิ่มรายการเข้าสต็อก</h2>
+    <form id="addItemForm">
+        <div class="form-group">
+            <label>วันที่รับเข้า</label>
+            <input type="date" id="itemDate" required>
+        </div>
+
+        <div class="form-group">
+            <label>หมวดหมู่สินค้า</label>
+            <select id="itemCat" required>
+                <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
+                <option value="drive 08">drive 08</option>
+                <option value="drive 16">drive 16</option>
+                <option value="drive 32">drive 32</option>
+                <option value="drive 48">drive 48</option>
+                <option value="drive 64">drive 64</option>
+                <option value="KPS">KPS</option>
+                <option value="MFC">MFC</option>
+                <option value="DSE">DSE</option>
+                <option value="Safety95">Safety95</option>
+                <option value="SafetyXP">SafetyXP</option>
+                <option value="Com95">Com95</option>
+                <option value="ComXP">ComXP</option>
+                <option value="การ์ดจอ">การ์ดจอ</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>รหัสสินค้า</label>
+            <input type="text" id="itemId" placeholder="เช่น SKU-001" required>
+        </div>
+
+        <div class="form-group">
+            <label>อาการ</label>
+            <input type="text" id="itemName" placeholder="ระบุอาการเสีย หรือ รายละเอียดสินค้า" required>
+        </div>
+
+        <div class="form-group">
+            <label>จำนวน</label>
+            <input type="number" id="itemQty" value="1" min="1" required>
+        </div>
+        <div class="form-group">
+            <label>สถานที่เก็บ</label>
+            <input type="text" id="itemLoc" placeholder="เช่น ชั้น A1, ตู้เก็บของ" required>
+        </div>
+        <div class="form-group">
+            <label>รูปภาพสินค้า (เลือกได้หลายรูป)</label>
+            <input type="file" id="itemImages" accept="image/*" multiple onchange="previewImages()">
+            <div id="preview-container"></div>
+        </div>
+
+        <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+        <a href="Search.html" class="btn-back">← กลับหน้าค้นหา</a>
+    </form>
+</div>
+
+<script>
+    document.getElementById('itemDate').valueAsDate = new Date();
+    let base64Images = [];
+
+    function previewImages() {
+        const files = document.getElementById('itemImages').files;
+        const container = document.getElementById('preview-container');
+        container.innerHTML = '';
+        base64Images = [];
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'preview-img';
+                container.appendChild(img);
+                base64Images.push(e.target.result);
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.getElementById('addItemForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const newItem = {
+            date: document.getElementById('itemDate').value,
+            cat: document.getElementById('itemCat').value,
+            id: document.getElementById('itemId').value,
+            name: document.getElementById('itemName').value,
+            qty: document.getElementById('itemQty').value,
+            loc: document.getElementById('itemLoc').value,
+            imgs: base64Images
+        };
+
+        let stockData = JSON.parse(localStorage.getItem('myStock')) || [];
+        stockData.push(newItem);
+        localStorage.setItem('myStock', JSON.stringify(stockData));
+
+        alert('บันทึกข้อมูลเรียบร้อยแล้ว!');
+        
+        // แก้ไขจุดที่ 2: เปลี่ยนคำสั่ง redirect ให้ไปที่หน้า Search.html
+        window.location.href = 'Search.html'; 
+    });
+</script>
+
+</body>
+</html>
