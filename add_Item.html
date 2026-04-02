@@ -5,56 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เพิ่มสต็อก - Repairaf</title>
     <style>
-        body { font-family: sans-serif; padding: 15px; background: #f0f2f5; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+        body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .header-flex { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: #2575fc; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        input, select { width: 100%; height: 45px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        .btn-submit { background: #2575fc; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        #preview-container { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
-        .preview-img { width: 60px; height: 60px; object-fit: cover; border-radius: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #4a5568; }
+        input, select { width: 100%; height: 48px; padding: 10px 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: #2575fc; box-shadow: 0 0 0 3px rgba(37,117,252,0.1); }
+        .btn-submit { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #718096; text-decoration: none; font-size: 14px; }
+        #preview-container { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .preview-img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 2px solid #edf2f7; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2 style="text-align:center">📦 เพิ่มสต็อกสินค้า</h2>
+    <div class="header-flex">
+        <span style="font-size: 24px;">📦</span>
+        <h2 style="margin:0; font-size: 20px;">เพิ่มสินค้าเข้าสต็อก</h2>
+    </div>
+
     <form id="addForm">
-        <div class="form-group"><label>📅 วันที่</label><input type="date" id="date" required></div>
         <div class="form-group">
-            <label>📁 หมวดหมู่</label>
+            <label>📅 วันที่บันทึก</label>
+            <input type="date" id="date" required>
+        </div>
+
+        <div class="form-group">
+            <label>📁 เลือกหมวดหมู่</label>
             <select id="cat" required>
+                <option value="">-- เลือกหมวดหมู่ --</option>
                 <option value="drive 08">drive 08</option>
                 <option value="drive 16">drive 16</option>
                 <option value="drive 32">drive 32</option>
-                </select>
+                <option value="drive 48">drive 48</option>
+                <option value="drive 64">drive 64</option>
+                <option value="KPS">KPS</option>
+                <option value="MFC">MFC</option>
+                <option value="DSE">DSE</option>
+                <option value="Safety95">Safety95</option>
+                <option value="SafetyXP">SafetyXP</option>
+                <option value="Com95">Com95</option>
+                <option value="ComXP">ComXP</option>
+                <option value="การ์ดจอ">การ์ดจอ</option>
+            </select>
         </div>
-        <div class="form-group"><label>🆔 รหัสสินค้า</label><input type="text" id="id" required></div>
-        <div class="form-group"><label>🔧 รายละเอียด/อาการ</label><input type="text" id="name" required></div>
-        <div class="form-group"><label>🔢 จำนวน</label><input type="number" id="qty" value="1"></div>
-        <div class="form-group"><label>📍 สถานที่เก็บ</label><input type="text" id="loc" required></div>
+
         <div class="form-group">
-            <label>📸 รูปภาพ</label>
-            <input type="file" id="files" accept="image/*" multiple onchange="handleFiles()">
+            <label>🆔 รหัสสินค้า / Serial Number</label>
+            <input type="text" id="id" placeholder="ระบุรหัสสินค้า..." required>
+        </div>
+
+        <div class="form-group">
+            <label>🔧 รายละเอียด / อาการเสีย</label>
+            <input type="text" id="name" placeholder="ระบุรายละเอียด..." required>
+        </div>
+
+        <div class="form-group">
+            <label>🔢 จำนวน</label>
+            <input type="number" id="qty" value="1" min="1">
+        </div>
+
+        <div class="form-group">
+            <label>📍 สถานที่จัดเก็บ</label>
+            <input type="text" id="loc" placeholder="เช่น ชั้น A1, ตู้เก็บที่ 2" required>
+        </div>
+
+        <div class="form-group">
+            <label>📸 รูปภาพสินค้า (เลือกได้หลายรูป)</label>
+            <input type="file" id="files" accept="image/*" multiple onchange="handleFiles()" style="padding-top: 10px;">
             <div id="preview-container"></div>
         </div>
+
         <button type="submit" class="btn-submit" id="btn">🚀 บันทึกข้อมูล</button>
+        <a href="Search.html" class="btn-back">⬅️ ย้อนกลับหน้าหลัก</a>
     </form>
 </div>
 
 <script>
+    // ตั้งค่าวันที่ปัจจุบันเป็นค่าเริ่มต้น
     document.getElementById('date').valueAsDate = new Date();
+    
+    // URL ที่ถูกต้อง (แก้จากที่ซ้อนกันแล้ว)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/exec';
+    
     let images = [];
 
     function handleFiles() {
         const files = document.getElementById('files').files;
         const container = document.getElementById('preview-container');
-        container.innerHTML = ''; images = [];
+        container.innerHTML = ''; 
+        images = [];
+        
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 images.push(e.target.result);
                 const img = document.createElement('img');
-                img.src = e.target.result; img.className = 'preview-img';
+                img.src = e.target.result; 
+                img.className = 'preview-img';
                 container.appendChild(img);
             };
             reader.readAsDataURL(file);
@@ -64,7 +115,10 @@
     document.getElementById('addForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn');
-        btn.disabled = true; btn.innerText = "⌛ กำลังบันทึก...";
+        
+        // ป้องกันการกดซ้ำ
+        btn.disabled = true; 
+        btn.innerText = "⌛ กำลังบันทึกข้อมูล...";
 
         const payload = {
             date: document.getElementById('date').value,
@@ -73,17 +127,29 @@
             name: document.getElementById('name').value,
             qty: document.getElementById('qty').value,
             loc: document.getElementById('loc').value,
-            imgs: JSON.stringify(images)
+            imgs: JSON.stringify(images) // ส่งรูปเป็นอาเรย์ของ Base64
         };
 
         try {
-            await fetch('ใhttps://script.google.com/macros/s/AKfycbxn1ejD3ge-5hPkk4YqvjmB-mqYkvwXI2v4tuPuS9eyhOuFJWS7CUsvc9ju0UlJejeT/exechttps://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/execส่_URL_ที่ได้จาก_APPS_SCRIPT_ตรงนี้', {
+            const response = await fetch(scriptURL, {
                 method: 'POST',
+                mode: 'no-cors', // สำคัญ: ป้องกันปัญหา CORS
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            alert('บันทึกสำเร็จ!');
+
+            // เนื่องด้วย mode: 'no-cors' เราจะมองไม่เห็นผลลัพธ์จาก server
+            // แต่ถ้า fetch ไม่ throw error แสดงว่าส่งถึงแล้ว
+            alert('✅ บันทึกข้อมูลสำเร็จ!');
             window.location.href = 'Search.html';
-        } catch (err) { alert('ผิดพลาด!'); btn.disabled = false; }
+            
+        } catch (err) {
+            console.error(err);
+            alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ!');
+            btn.disabled = false;
+            btn.innerText = "🚀 บันทึกข้อมูล";
+        }
     };
 </script>
 </body>

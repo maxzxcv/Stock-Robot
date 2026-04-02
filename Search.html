@@ -10,16 +10,16 @@
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2575fc; margin: 0; font-size: 1.4rem; }
         .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; font-size: 14px; transition: 0.2s; }
-        .btn-nav:active { transform: scale(0.95); opacity: 0.9; }
         
         .category-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; padding: 12px; background: #f0f3ff; border-radius: 12px; }
         .cat-chip { background: white; padding: 15px 10px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; transition: 0.2s; border: 1.5px solid #dce4ff; }
-        .cat-chip:active { background: #2575fc; color: white; transform: scale(0.95); border-color: #2575fc; }
-        .cat-count { background: #eef2ff; padding: 2px 8px; border-radius: 10px; font-size: 11px; color: #2575fc; font-weight: bold; }
-        .cat-chip:active .cat-count { background: rgba(255,255,255,0.3); color: white; }
+        .cat-chip:active { background: #2575fc; color: white; transform: scale(0.95); }
         
-        .search-box { width: 100%; box-sizing: border-box; padding: 14px; border: 1.5px solid #dce4ff; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        .search-box:focus { border-color: #2575fc; box-shadow: 0 0 0 3px rgba(37,117,252,0.1); }
+        .cat-count { background: #eef2ff; padding: 2px 8px; border-radius: 10px; font-size: 11px; color: #2575fc; font-weight: bold; min-width: 40px; }
+        .loading-dots:after { content: '...'; animation: dots 1s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
+
+        .search-box { width: 100%; box-sizing: border-box; padding: 14px; border: 1.5px solid #dce4ff; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; }
     </style>
 </head>
 <body>
@@ -31,27 +31,27 @@
 
     <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="🔍 ค้นหาหมวดหมู่...">
 
-    <div id="categoryChips" class="category-container">
-        <div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">⌛ กำลังโหลดข้อมูลจากระบบ...</div>
-    </div>
+    <div id="categoryChips" class="category-container"></div>
 </div>
 
 <script>
-    // แก้ไข URL ให้ถูกต้อง (ลบข้อความภาษาไทยที่ปนอยู่ออกแล้ว)
-    const scriptURL = 'https://script.google.com/macrohttps://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/execs/s/AKfycbxn1ejD3ge-5hPkk4YqvjmB-mqYkvwXI2v4tuPuS9eyhOuFJWS7CUsvc9ju0UlJejeT/exec';
+    // URL ที่ถูกต้อง
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/exec';
     
     let stockData = []; 
     const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
 
     function init() {
-        // 1. ดึงข้อมูลจาก Cache มาโชว์ก่อนเพื่อความเร็ว
+        // 1. ลองดึงข้อมูลเก่ามาโชว์ก่อน (เพื่อความเร็ว)
         const cached = localStorage.getItem('stock_cache');
         if(cached) {
             stockData = JSON.parse(cached);
-            render();
+            render(); 
         }
-        // 2. ดึงข้อมูลใหม่จาก Google Sheets
-        fetchData();
+        
+        // 2. บังคับโหลดข้อมูลใหม่จาก Google Sheets ทันที
+        // เพิ่มบรรทัดนี้เพื่อล้างสถานะเดิม แล้วรอรับข้อมูลใหม่
+        fetchData(); 
     }
 
     async function fetchData() {
@@ -59,12 +59,9 @@
             const res = await fetch(scriptURL);
             const data = await res.json();
             stockData = data;
-            // บันทึกลงเครื่อง
             localStorage.setItem('stock_cache', JSON.stringify(data));
-            render();
-        } catch (e) { 
-            console.error("Fetch Error:", e);
-        }
+            render(); 
+        } catch (e) { console.error("Fetch Error:", e); }
     }
 
     function render() {
@@ -72,36 +69,35 @@
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         container.innerHTML = '';
 
-        // กรองหมวดหมู่ตามที่พิมพ์ค้นหา
         const filteredCats = allCategories.filter(cat => cat.toLowerCase().includes(searchTerm));
 
         if (filteredCats.length === 0) {
-            container.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">❌ ไม่พบหมวดหมู่ที่ค้นหา</div>';
+            container.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">❌ ไม่พบหมวดหมู่</div>';
             return;
         }
 
         filteredCats.forEach(cat => {
-            // นับจำนวนสินค้าที่มีอยู่ในหมวดหมู่นี้
-            const count = stockData.filter(i => i.cat === cat).length;
+            const count = stockData.length > 0 
+                ? stockData.filter(i => i.cat === cat).length + ' รายการ' 
+                : '<span class="loading-dots">กำลังโหลด</span>';
             
             const chip = document.createElement('div');
             chip.className = 'cat-chip';
             chip.innerHTML = `
                 <span style="font-size: 20px;">📦</span>
                 <b>${cat}</b>
-                <span class="cat-count">${count} รายการ</span>
+                <span class="cat-count">${count}</span>
             `;
             
-            // เมื่อคลิก จะส่งชื่อหมวดหมู่ผ่าน URL Parameter ไปที่หน้า Stock.html
+            // เปลี่ยนจาก Stock.html เป็น view_category.html ตรงนี้
             chip.onclick = () => {
-                window.location.href = `Stock.html?cat=${encodeURIComponent(cat)}`;
+                window.location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
             };
             
             container.appendChild(chip);
         });
     }
 
-    // รันระบบเมื่อเปิดหน้าเว็บ
     init();
 </script>
 </body>

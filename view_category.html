@@ -5,48 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>รายการสินค้า - Repair Stock</title>
     <style>
-        @import url('https://fonts.gohttps://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/execogleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
         
-        body { font-family: 'Prompt', sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; color: #333; }
+        body { font-family: 'Prompt', sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 800px; margin: auto; }
         
+        /* Header */
         .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .btn-back { text-decoration: none; color: #2575fc; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        
-        h2 { margin: 0; color: #1a1a1a; font-size: 1.5rem; }
-        .badge { background: #2575fc; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
+        h2 { margin: 0; color: #1a1a1a; font-size: 1.3rem; }
+        .badge { background: #2575fc; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
 
-        /* Card แสดงรายการสินค้า */
+        /* Card สินค้า */
         .item-card { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-left: 5px solid #2575fc;
+            background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer;
+            border-left: 5px solid #2575fc; transition: 0.2s;
         }
-
-        .item-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .item-card:active { transform: scale(0.97); }
+        .item-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
         .item-id { font-weight: 600; color: #2575fc; }
-        .item-date { font-size: 0.85rem; color: #888; }
+        .item-name { font-weight: 500; font-size: 1rem; margin-bottom: 8px; display: block; }
+        
+        /* แถบรูปเล็กหน้า Preview */
+        .thumb-preview { display: flex; gap: 5px; overflow: hidden; height: 50px; margin-bottom: 8px; }
+        .thumb-preview img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; background: #eee; }
 
-        .item-body { font-size: 1rem; line-height: 1.4; }
-        .item-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem; color: #666; }
-        .qty-tag { background: #eef2ff; color: #2575fc; padding: 2px 10px; border-radius: 5px; font-weight: bold; }
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;
+            backdrop-filter: blur(4px); padding: 15px;
+        }
+        .modal-content {
+            background: white; width: 100%; max-width: 380px; border-radius: 25px;
+            padding: 20px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* ส่วนแสดงรูปภาพ */
-        .image-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; background: #eee; }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 28px; color: #bbb; cursor: pointer; z-index: 10; line-height: 1; }
+        
+        /* ส่วนแสดงรูปภาพใน Modal */
+        .main-img-box { width: 100%; height: 230px; background: #f0f0f0; border-radius: 15px; overflow: hidden; margin-bottom: 10px; display: flex; justify-content: center; }
+        .main-img-box img { width: 100%; height: 100%; object-fit: contain; }
+        
+        /* ปุ่มดูรูปภาพ (Zoom) */
+        .btn-zoom {
+            width: 100%; background: #f0f4ff; color: #2575fc; border: 1px dashed #2575fc;
+            padding: 10px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;
+            margin-bottom: 15px; cursor: pointer; font-family: 'Prompt';
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-zoom:hover { background: #e0e7ff; }
 
-        .empty-state { text-align: center; padding: 50px 20px; color: #999; }
+        /* รายการรูปเล็กใน Modal */
+        .scroll-imgs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; scrollbar-width: none; }
+        .scroll-imgs::-webkit-scrollbar { display: none; }
+        .scroll-imgs img { width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; flex-shrink: 0; cursor: pointer; }
+        .scroll-imgs img.active { border-color: #2575fc; transform: scale(1.05); }
 
-        /* Modal สำหรับดูรูปใหญ่ */
-        #imgModal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        #modalImg { max-width: 90%; max-height: 80%; border-radius: 10px; }
-        .close-modal { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; cursor: pointer; }
+        /* ข้อมูลรายละเอียด */
+        .info-group { margin-bottom: 12px; font-size: 0.95rem; }
+        .label { color: #888; font-size: 0.8rem; display: block; }
+        .val { font-weight: 500; color: #1a1a1a; display: block; margin-top: 2px; }
+
+        .btn-confirm { 
+            width: 100%; padding: 15px; background: #2575fc; color: white; border: none; 
+            border-radius: 15px; font-family: 'Prompt'; font-weight: 600; font-size: 1rem; margin-top: 10px; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 117, 252, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -54,23 +83,55 @@
 <div class="container">
     <div class="header">
         <a href="Search.html" class="btn-back">← ย้อนกลับ</a>
-        <span id="catBadge" class="badge">กำลังโหลด...</span>
+        <span id="catBadge" class="badge">...</span>
     </div>
-
     <h2 id="catTitle">รายการสินค้า</h2>
-    <hr style="border: 1px solid #ddd; margin: 15px 0;">
-
-    <div id="itemList">
-        </div>
+    <hr style="border: 0; height: 1px; background: #eee; margin: 15px 0;">
+    <div id="itemList"></div>
 </div>
 
-<div id="imgModal" onclick="this.style.display='none'">
-    <span class="close-modal">&times;</span>
-    <img id="modalImg">
+<div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="modal-close" onclick="closeModalDirect()">&times;</span>
+        
+        <div id="galleryArea">
+            <div class="main-img-box">
+                <img id="mainImg" src="" alt="Product">
+            </div>
+            
+            <button class="btn-zoom" onclick="zoomImage()">
+                🔍 แตะเพื่อดูรูปภาพขนาดเต็ม
+            </button>
+            
+            <div id="thumbList" class="scroll-imgs"></div>
+        </div>
+
+        <div class="info-group">
+            <span class="label">ชื่อสินค้า/อาการ</span>
+            <span id="mName" class="val"></span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="info-group">
+                <span class="label">รหัสสินค้า</span>
+                <span id="mId" class="val" style="color:#2575fc"></span>
+            </div>
+            <div class="info-group">
+                <span class="label">คงเหลือ</span>
+                <span id="mQty" class="val"></span>
+            </div>
+        </div>
+
+        <div class="info-group">
+            <span class="label">สถานที่จัดเก็บ</span>
+            <span id="mLoc" class="val"></span>
+        </div>
+
+        <button class="btn-confirm" onclick="closeModalDirect()">ตกลง</button>
+    </div>
 </div>
 
 <script>
-    // 1. รับค่าหมวดหมู่จาก URL
     const urlParams = new URLSearchParams(window.location.search);
     const selectedCat = urlParams.get('cat');
 
@@ -80,78 +141,130 @@
         const title = document.getElementById('catTitle');
 
         if (!selectedCat) {
-            listContainer.innerHTML = '<div class="empty-state">ไม่ระบุหมวดหมู่</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:50px; color:#999;">ไม่ระบุหมวดหมู่</div>';
             return;
         }
 
         badge.innerText = selectedCat;
         title.innerText = `คลัง: ${selectedCat}`;
 
-        // 2. ดึงข้อมูลจาก Cache (LocalStorage)
         const cachedData = localStorage.getItem('stock_cache');
         if (!cachedData) {
-            listContainer.innerHTML = '<div class="empty-state">ไม่พบข้อมูลในเครื่อง กรุณากลับไปหน้าหลักเพื่อโหลดข้อมูลใหม่</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:50px; color:#999;">กรุณากลับไปหน้าหลักเพื่อโหลดข้อมูล</div>';
             return;
         }
 
         const stockData = JSON.parse(cachedData);
-        // 3. กรองเฉพาะข้อมูลที่ตรงกับหมวดหมู่
         const filteredItems = stockData.filter(item => item.cat === selectedCat);
 
         if (filteredItems.length === 0) {
-            listContainer.innerHTML = '<div class="empty-state">📭 ยังไม่มีสินค้าในหมวดหมู่นี้</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:50px; color:#999;">📭 ไม่มีสินค้าในคลังนี้</div>';
             return;
         }
 
-        // 4. แสดงผลรายการ
         listContainer.innerHTML = '';
         filteredItems.forEach(item => {
             const card = document.createElement('div');
             card.className = 'item-card';
+            card.onclick = () => openDetail(item);
 
-            // จัดการเรื่องรูปภาพ (ถ้ามี)
-            let imgHtml = '';
-            if (item.img) {
-                try {
-                    const imgs = JSON.parse(item.img);
-                    if (Array.isArray(imgs) && imgs.length > 0) {
-                        imgHtml = '<div class="image-gallery">';
-                        imgs.forEach(src => {
-                            imgHtml += `<img src="${src}" class="thumb-img" onclick="showBigImg('${src}', event)">`;
-                        });
-                        imgHtml += '</div>';
-                    }
-                } catch(e) { console.log("No images or format error"); }
-            }
+            let previewHtml = '';
+            try {
+                const imgs = JSON.parse(item.img);
+                if (imgs && imgs.length > 0) {
+                    previewHtml = '<div class="thumb-preview">';
+                    imgs.slice(0, 5).forEach(src => {
+                        previewHtml += `<img src="${src}">`;
+                    });
+                    previewHtml += '</div>';
+                }
+            } catch(e) {}
 
             card.innerHTML = `
                 <div class="item-header">
-                    <span class="item-id">ID: ${item.id}</span>
-                    <span class="item-date">${new Date(item.date).toLocaleDateString('th-TH')}</span>
+                    <span class="item-id"># ${item.id}</span>
+                    <span style="color:#999">${new Date(item.date).toLocaleDateString('th-TH')}</span>
                 </div>
-                <div class="item-body">
-                    <b>อาการ/รายละเอียด:</b><br>
-                    ${item.name}
-                </div>
-                ${imgHtml}
-                <div class="item-info">
+                <span class="item-name">${item.name}</span>
+                ${previewHtml}
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#666;">
                     <span>📍 ${item.loc}</span>
-                    <span class="qty-tag">คงเหลือ: ${item.qty}</span>
+                    <span style="font-weight:600; color:#2575fc">คงเหลือ: ${item.qty}</span>
                 </div>
             `;
             listContainer.appendChild(card);
         });
     }
 
-    function showBigImg(src, event) {
-        event.stopPropagation();
-        const modal = document.getElementById('imgModal');
-        const modalImg = document.getElementById('modalImg');
-        modal.style.display = 'flex';
-        modalImg.src = src;
+    function openDetail(item) {
+        document.getElementById('mName').innerText = item.name;
+        document.getElementById('mId').innerText = item.id;
+        document.getElementById('mQty').innerText = item.qty + ' ชิ้น';
+        document.getElementById('mLoc').innerText = '📍 ' + item.loc;
+
+        const mainImg = document.getElementById('mainImg');
+        const thumbList = document.getElementById('thumbList');
+        const galleryArea = document.getElementById('galleryArea');
+        
+        thumbList.innerHTML = '';
+        
+        try {
+            const imgs = JSON.parse(item.img);
+            if (imgs && imgs.length > 0) {
+                galleryArea.style.display = 'block';
+                mainImg.src = imgs[0];
+                
+                if (imgs.length > 1) {
+                    thumbList.style.display = 'flex';
+                    imgs.forEach((src, idx) => {
+                        const t = document.createElement('img');
+                        t.src = src;
+                        if(idx === 0) t.className = 'active';
+                        t.onclick = function() {
+                            mainImg.src = src;
+                            document.querySelectorAll('.scroll-imgs img').forEach(i => i.classList.remove('active'));
+                            this.classList.add('active');
+                        };
+                        thumbList.appendChild(t);
+                    });
+                } else {
+                    thumbList.style.display = 'none';
+                }
+            } else {
+                galleryArea.style.display = 'none';
+            }
+        } catch(e) {
+            galleryArea.style.display = 'none';
+        }
+
+        document.getElementById('detailModal').style.display = 'flex';
     }
 
-    // เริ่มทำงาน
+    // ฟังก์ชันเปิดดูรูปภาพขนาดเต็มในแท็บใหม่
+    function zoomImage() {
+        const currentSrc = document.getElementById('mainImg').src;
+        if(currentSrc) {
+            // สร้างหน้าต่างใหม่เพื่อแสดงรูปภาพแบบเต็ม
+            const imageWindow = window.open("");
+            imageWindow.document.write(`
+                <html>
+                    <head><title>ดูรูปภาพขยาย</title></head>
+                    <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center;">
+                        <img src="${currentSrc}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                    </body>
+                </html>
+            `);
+        }
+    }
+
+    function closeModalDirect() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function closeModal(e) {
+        if (e.target.id === 'detailModal') closeModalDirect();
+    }
+
     window.onload = loadItems;
 </script>
 
