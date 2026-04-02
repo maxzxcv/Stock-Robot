@@ -5,148 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>คลังสินค้า - Repairaf</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f4f7f6; margin: 0; color: #333; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f4f7f6; margin: 0; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { color: #2575fc; margin: 0; font-size: 1.4rem; }
+        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .btn-nav:active { transform: scale(0.95); opacity: 0.9; }
         
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
-        h2 { color: #2575fc; margin: 0; font-size: 1.2rem; }
+        .category-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; padding: 12px; background: #f0f3ff; border-radius: 12px; }
+        .cat-chip { background: white; padding: 15px 10px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; transition: 0.2s; border: 1.5px solid #dce4ff; }
+        .cat-chip:active { background: #2575fc; color: white; transform: scale(0.95); border-color: #2575fc; }
+        .cat-count { background: #eef2ff; padding: 2px 8px; border-radius: 10px; font-size: 11px; color: #2575fc; font-weight: bold; }
+        .cat-chip:active .cat-count { background: rgba(255,255,255,0.3); color: white; }
         
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 13px; border: none; }
-
-        .category-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 12px;
-            background: #f0f3ff;
-            border-radius: 12px;
-            border: 1px solid #dce4ff;
-        }
-        
-        .cat-chip {
-            background: white;
-            border: 1.5px solid #dce4ff;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
-            color: #444;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .cat-chip.active {
-            background: #2575fc;
-            color: white;
-            border-color: #2575fc;
-            box-shadow: 0 4px 10px rgba(37, 117, 252, 0.2);
-            transform: translateX(5px);
-        }
-
-        .cat-count {
-            background: #eee;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #666;
-        }
-        
-        .cat-chip.active .cat-count {
-            background: rgba(255,255,255,0.3);
-            color: white;
-        }
-
-        .search-box { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 15px; outline: none; }
-
-        .table-responsive { width: 100%; }
-        table { width: 100%; border-collapse: collapse; }
-        .empty-state { text-align: center; padding: 40px 20px; color: #888; font-style: italic; background: #fafafa; border-radius: 10px; border: 1px dashed #ccc; }
-
-        @media screen and (max-width: 600px) {
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { border: 1px solid #e0e0e0; margin-bottom: 15px; border-radius: 10px; padding: 12px; background: #fff; }
-            td { border: none; padding: 6px 0 6px 40%; position: relative; font-size: 14px; display: flex; align-items: center; justify-content: flex-end; }
-            td:before { content: attr(data-label); position: absolute; left: 0; width: 35%; font-weight: 600; color: #666; text-align: left; }
-            .action-buttons { display: flex; gap: 5px; width: 100%; margin-top: 10px; }
-            .btn-edit, .btn-delete { flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; }
-            .btn-edit { background: #ffc107; }
-            .btn-delete { background: #dc3545; color: white; }
-            .btn-show-img { background: #6a11cb; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; margin-top: 5px; }
-        }
+        .search-box { width: 100%; box-sizing: border-box; padding: 14px; border: 1.5px solid #dce4ff; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #2575fc; box-shadow: 0 0 0 3px rgba(37,117,252,0.1); }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header-flex">
-        <h2>📦 รายการสต็อก</h2>
+        <h2>📦 หมวดหมู่สินค้า</h2>
         <a href="add_Item.html" class="btn-nav">+ เพิ่มสินค้า</a>
     </div>
 
+    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="🔍 ค้นหาหมวดหมู่...">
+
     <div id="categoryChips" class="category-container">
-        <div style="text-align: center; color: #999; font-size: 13px;">⌛ กำลังโหลดหมวดหมู่...</div>
-    </div>
-
-    <input type="text" id="searchInput" class="search-box" onkeyup="renderTable()" placeholder="🔍 ค้นหารหัส หรือ อาการ...">
-
-    <div class="table-responsive">
-        <table id="stockTable">
-            <tbody id="tableBody">
-                <tr><td class="empty-state">กรุณาเลือกหมวดหมู่ด้านบนเพื่อดูข้อมูล</td></tr>
-            </tbody>
-        </table>
+        <div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">⌛ กำลังโหลดข้อมูลจากระบบ...</div>
     </div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyDWc85DoOYT3SH4w2FgnAdRN92Rc_ZWGz-t_xXJFRXnetJy4KfG9YuFc3O789TudTkMg/exec';
+    // แก้ไข URL ให้ถูกต้อง (ลบข้อความภาษาไทยที่ปนอยู่ออกแล้ว)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxn1ejD3ge-5hPkk4YqvjmB-mqYkvwXI2v4tuPuS9eyhOuFJWS7CUsvc9ju0UlJejeT/exec';
     
     let stockData = []; 
+    const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
 
-    // รายชื่อหมวดหมู่ทั้งหมด
-    const allCategories = [
-        "drive 08", "drive 16", "drive 32", "drive 48", "drive 64", 
-        "KPS", "MFC", "DSE", "Safety95", "SafetyXP", 
-        "Com95", "ComXP", "การ์ดจอ"
-    ];
+    function init() {
+        // 1. ดึงข้อมูลจาก Cache มาโชว์ก่อนเพื่อความเร็ว
+        const cached = localStorage.getItem('stock_cache');
+        if(cached) {
+            stockData = JSON.parse(cached);
+            render();
+        }
+        // 2. ดึงข้อมูลใหม่จาก Google Sheets
+        fetchData();
+    }
 
     async function fetchData() {
         try {
-            const response = await fetch(scriptURL);
-            stockData = await response.json();
-            createCategoryMenu();
-        } catch (error) {
-            document.getElementById('categoryChips').innerHTML = '<span style="color:red; text-align:center;">❌ โหลดข้อมูลไม่สำเร็จ</span>';
+            const res = await fetch(scriptURL);
+            const data = await res.json();
+            stockData = data;
+            // บันทึกลงเครื่อง
+            localStorage.setItem('stock_cache', JSON.stringify(data));
+            render();
+        } catch (e) { 
+            console.error("Fetch Error:", e);
         }
     }
 
-    function createCategoryMenu() {
-        const chipContainer = document.getElementById('categoryChips');
-        chipContainer.innerHTML = ''; 
+    function render() {
+        const container = document.getElementById('categoryChips');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        container.innerHTML = '';
 
-        allCategories.forEach(cat => {
-            const count = stockData.filter(item => item.cat === cat).length;
+        // กรองหมวดหมู่ตามที่พิมพ์ค้นหา
+        const filteredCats = allCategories.filter(cat => cat.toLowerCase().includes(searchTerm));
+
+        if (filteredCats.length === 0) {
+            container.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">❌ ไม่พบหมวดหมู่ที่ค้นหา</div>';
+            return;
+        }
+
+        filteredCats.forEach(cat => {
+            // นับจำนวนสินค้าที่มีอยู่ในหมวดหมู่นี้
+            const count = stockData.filter(i => i.cat === cat).length;
+            
             const chip = document.createElement('div');
             chip.className = 'cat-chip';
-            chip.innerHTML = `<span>${cat}</span> <span class="cat-count">${count} รายการ</span>`;
+            chip.innerHTML = `
+                <span style="font-size: 20px;">📦</span>
+                <b>${cat}</b>
+                <span class="cat-count">${count} รายการ</span>
+            `;
             
-            // เมื่อกดแล้วจะส่งไปหน้า view_category.html พร้อมชื่อหมวดหมู่
+            // เมื่อคลิก จะส่งชื่อหมวดหมู่ผ่าน URL Parameter ไปที่หน้า Stock.html
             chip.onclick = () => {
-                const targetPage = 'view_category.html'; // ชื่อไฟล์หน้าแสดงผลของคุณ
-                window.location.href = `${targetPage}?cat=${encodeURIComponent(cat)}`;
+                window.location.href = `Stock.html?cat=${encodeURIComponent(cat)}`;
             };
-            chipContainer.appendChild(chip);
+            
+            container.appendChild(chip);
         });
     }
 
-    fetchData();
+    // รันระบบเมื่อเปิดหน้าเว็บ
+    init();
 </script>
 </body>
 </html>
