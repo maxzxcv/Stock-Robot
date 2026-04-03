@@ -2,144 +2,23 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome - Repair Stock</title>
     <style>
-        /* ใช้ฟอนต์ Prompt ที่อ่านง่ายและเป็นมาตรฐานสำหรับเว็บไทยสมัยใหม่ */
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
-
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Prompt', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* พื้นหลังไล่สีโทนสุภาพ Blue-Grey */
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            box-sizing: border-box;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 50px 35px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            /* เงาแบบนุ่มนวล (Soft Shadow) ไม่ฟุ้งจนเกินไป */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 20px 48px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        .logo-wrapper {
-            margin-bottom: 25px;
-        }
-
-        .card img {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 4px solid #f8f9fa;
-            background: white;
-            padding: 5px;
-            object-fit: contain;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .title {
-            font-size: 26px;
-            font-weight: 600;
-            color: #2d3436;
-            margin: 0 0 8px 0;
-            letter-spacing: 0.5px;
-        }
-
-        .subtitle {
-            color: #636e72;
-            font-size: 16px;
-            margin: 0 0 35px 0;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        .btn {
-            display: block;
-            padding: 16px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 18px;
-            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.2);
-            transition: all 0.3s ease;
-            border: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* เอฟเฟกต์ปุ่มเล็กน้อยเวลาชี้และกด */
-        @media (hover: hover) {
-            .btn:hover {
-                filter: brightness(1.1);
-                box-shadow: 0 10px 25px rgba(37, 117, 252, 0.3);
-                transform: translateY(-2px);
-            }
-        }
-
-        .btn:active {
-            transform: translateY(0) scale(0.97);
-        }
-
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #f1f3f5;
-            font-size: 12px;
-            color: #b2bec3;
-            line-height: 1.6;
-        }
-
-        .company-name {
-            color: #4a5568;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        /* ปรับแต่งพิเศษสำหรับหน้าจอมือถือขนาดเล็ก */
-        @media screen and (max-width: 360px) {
-            .card {
-                padding: 40px 25px;
-            }
-            .title {
-                font-size: 24px;
-            }
-            .card img {
-                width: 100px;
-                height: 100px;
-            }
-        }
+        body { margin: 0; padding: 20px; font-family: 'Prompt', sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+        .card { background: white; padding: 40px; border-radius: 24px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        img { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 20px; object-fit: cover; border: 5px solid #f0f2f5; }
+        .btn { display: block; padding: 15px; background: #2575fc; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: 0.3s; }
+        .btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
-
     <div class="card">
-        <div class="logo-wrapper">
-            <img src="Logo.jpg" alt="logo" onerror="this.src='https://via.placeholder.com/110?text=NP+Robot'">
-        </div>
-        
-        <h1 class="title">ยินดีต้อนรับ</h1>
-        <p class="subtitle">ระบบจัดการสต็อกสินค้า<br>Robot Repair Center</p>
-        
-        <a href="Search.html" class="btn">🚀 เริ่มต้นใช้งาน</a>
-        
-        <div class="footer">
-            <span class="company-name">บริษัท เอ็น.พี. โรโบติกส์ แอนด์ โซลูชั่น จำกัด</span>
-            <div>© 2026 All Rights Reserved</div>
-        </div>
+        <img src="Logo.jpg" onerror="this.src='https://via.placeholder.com/120?text=STOCK'">
+        <h2>Repair Stock</h2>
+        <p style="color: #666; margin-bottom: 30px;">ระบบจัดการอะไหล่และอุปกรณ์</p>
+        <a href="Search.html" class="btn">เข้าสู่ระบบ</a>
     </div>
-
 </body>
 </html>

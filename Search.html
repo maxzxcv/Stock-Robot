@@ -2,103 +2,61 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>คลังสินค้า - Repairaf</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คลังสินค้า</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; background-color: #f4f7f6; margin: 0; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+        body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: #2575fc; margin: 0; font-size: 1.4rem; }
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; font-size: 14px; transition: 0.2s; }
-        
-        .category-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; padding: 12px; background: #f0f3ff; border-radius: 12px; }
-        .cat-chip { background: white; padding: 15px 10px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; transition: 0.2s; border: 1.5px solid #dce4ff; }
-        .cat-chip:active { background: #2575fc; color: white; transform: scale(0.95); }
-        
-        .cat-count { background: #eef2ff; padding: 2px 8px; border-radius: 10px; font-size: 11px; color: #2575fc; font-weight: bold; min-width: 40px; }
-        .loading-dots:after { content: '...'; animation: dots 1s steps(5, end) infinite; }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } }
-
-        .search-box { width: 100%; box-sizing: border-box; padding: 14px; border: 1.5px solid #dce4ff; border-radius: 12px; font-size: 16px; margin-bottom: 15px; outline: none; }
+        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; }
+        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .cat-chip { background: #f8faff; padding: 20px 10px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; }
+        .cat-count { background: #2575fc; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 20px; box-sizing: border-box; font-family: 'Prompt'; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header-flex">
-        <h2>📦 หมวดหมู่สินค้า</h2>
-        <a href="add_Item.html" class="btn-nav">+ เพิ่มสินค้า</a>
+        <h2 style="margin:0; color:#2575fc;">📦 รายการอะไหล่</h2>
+        <a href="add_Item.html" class="btn-nav">+ เพิ่มของ</a>
     </div>
-
-    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="🔍 ค้นหาหมวดหมู่...">
-
+    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="ค้นหาหมวดหมู่...">
     <div id="categoryChips" class="category-container"></div>
 </div>
 
 <script>
-    // URL ที่ถูกต้อง
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxilX_25J-eBzqb7r1OZvmHcu_bNKQmkE3uTdYaVxOOkVWv6-NxeD2oMye0KN28etb3ug/exec';
-    
-    let stockData = []; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbybJjrPOTtgsFyVi-VBGHO1KMLOoxoaUWoAljEkqtYpg6F04XOXEC7qnfjtN5EjmjE/exec'; 
     const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
-
-    function init() {
-        // 1. ลองดึงข้อมูลเก่ามาโชว์ก่อน (เพื่อความเร็ว)
-        const cached = localStorage.getItem('stock_cache');
-        if(cached) {
-            stockData = JSON.parse(cached);
-            render(); 
-        }
-        
-        // 2. บังคับโหลดข้อมูลใหม่จาก Google Sheets ทันที
-        // เพิ่มบรรทัดนี้เพื่อล้างสถานะเดิม แล้วรอรับข้อมูลใหม่
-        fetchData(); 
-    }
+    let stockData = [];
 
     async function fetchData() {
         try {
-            const res = await fetch(scriptURL);
-            const data = await res.json();
-            stockData = data;
-            localStorage.setItem('stock_cache', JSON.stringify(data));
-            render(); 
-        } catch (e) { console.error("Fetch Error:", e); }
+            const res = await fetch(scriptURL + '?t=' + new Date().getTime());
+            stockData = await res.json();
+            localStorage.setItem('stock_cache', JSON.stringify(stockData));
+            render();
+        } catch (e) { console.error(e); }
     }
 
     function render() {
         const container = document.getElementById('categoryChips');
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const search = document.getElementById('searchInput').value.toLowerCase();
         container.innerHTML = '';
-
-        const filteredCats = allCategories.filter(cat => cat.toLowerCase().includes(searchTerm));
-
-        if (filteredCats.length === 0) {
-            container.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #999; padding: 20px;">❌ ไม่พบหมวดหมู่</div>';
-            return;
-        }
-
-        filteredCats.forEach(cat => {
-            const count = stockData.length > 0 
-                ? stockData.filter(i => i.cat === cat).length + ' รายการ' 
-                : '<span class="loading-dots">กำลังโหลด</span>';
-            
+        allCategories.filter(cat => cat.toLowerCase().includes(search)).forEach(cat => {
+            const count = stockData.filter(i => String(i.cat).trim() === String(cat).trim()).length;
             const chip = document.createElement('div');
             chip.className = 'cat-chip';
-            chip.innerHTML = `
-                <span style="font-size: 20px;">📦</span>
-                <b>${cat}</b>
-                <span class="cat-count">${count}</span>
-            `;
-            
-            // เปลี่ยนจาก Stock.html เป็น view_category.html ตรงนี้
-            chip.onclick = () => {
-                window.location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
-            };
-            
+            chip.innerHTML = `<b>${cat}</b><br><span class="cat-count">${count} รายการ</span>`;
+            chip.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
             container.appendChild(chip);
         });
     }
 
-    init();
+    const cached = localStorage.getItem('stock_cache');
+    if(cached) { stockData = JSON.parse(cached); render(); }
+    fetchData();
 </script>
 </body>
 </html>
