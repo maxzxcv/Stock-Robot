@@ -49,11 +49,20 @@
 
     async function fetchData() {
         try {
+            // เพิ่ม Timestamp เพื่อป้องกัน Browser จำค่าเก่า (No-Cache)
             const res = await fetch(scriptURL + '?t=' + new Date().getTime());
-            stockData = await res.json();
-            localStorage.setItem('stock_cache', JSON.stringify(stockData));
-            render();
-        } catch (e) { console.error("Fetch Error:", e); }
+            const newData = await res.json();
+            
+            if (newData && newData.length > 0) {
+                stockData = newData;
+                // บันทึกทับ Cache เก่าทันที
+                localStorage.setItem('stock_cache', JSON.stringify(stockData));
+                render(); 
+                console.log("ข้อมูลอัปเดตแล้ว:", stockData.length, "รายการ");
+            }
+        } catch (e) { 
+            console.error("Fetch Error:", e); 
+        }
     }
 
     function render() {
