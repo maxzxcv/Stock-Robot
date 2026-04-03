@@ -2,28 +2,44 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คลังสินค้า</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>คลังสินค้า - ค้นหา</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
         body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; }
         .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; }
+        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 14px; }
+        
+        /* สไตล์ช่องค้นหา */
+        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 20px; box-sizing: border-box; font-family: 'Prompt'; font-size: 16px; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #2575fc; box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1); }
+
+        /* การแสดงผลหมวดหมู่ (Grid) */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .cat-chip { background: #f8faff; padding: 20px 10px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; }
-        .cat-count { background: #2575fc; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
-        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 20px; box-sizing: border-box; font-family: 'Prompt'; }
+        .cat-chip { background: #f8faff; padding: 15px 10px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; transition: 0.2s; }
+        .cat-chip:active { transform: scale(0.95); background: #edf2f7; }
+        .cat-count { background: #2575fc; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; display: inline-block; margin-top: 5px; }
+
+        /* การแสดงผลรายการสินค้าที่ค้นหาเจอ (List) */
+        .search-result-item { background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .search-result-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #f1f5f9; }
+        .item-info b { color: #2d3748; display: block; }
+        .item-info small { color: #718096; font-size: 12px; }
+        .section-title { font-size: 14px; color: #718096; margin-bottom: 10px; font-weight: 600; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header-flex">
-        <h2 style="margin:0; color:#2575fc;">📦 รายการอะไหล่</h2>
+        <h2 style="margin:0; color:#2575fc;">📦 คลังอะไหล่</h2>
         <a href="add_Item.html" class="btn-nav">+ เพิ่มของ</a>
     </div>
-    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="ค้นหาหมวดหมู่...">
-    <div id="categoryChips" class="category-container"></div>
+
+    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="พิมพ์ชื่อสินค้า หรือ หมวดหมู่ที่ต้องการ...">
+
+    <div id="displayArea">
+        </div>
 </div>
 
 <script>
@@ -37,26 +53,69 @@
             stockData = await res.json();
             localStorage.setItem('stock_cache', JSON.stringify(stockData));
             render();
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("Fetch Error:", e); }
     }
 
     function render() {
-        const container = document.getElementById('categoryChips');
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        container.innerHTML = '';
-        allCategories.filter(cat => cat.toLowerCase().includes(search)).forEach(cat => {
-            const count = stockData.filter(i => String(i.cat).trim() === String(cat).trim()).length;
-            const chip = document.createElement('div');
-            chip.className = 'cat-chip';
-            chip.innerHTML = `<b>${cat}</b><br><span class="cat-count">${count} รายการ</span>`;
-            chip.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
-            container.appendChild(chip);
-        });
+        const displayArea = document.getElementById('displayArea');
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        displayArea.innerHTML = '';
+
+        if (query === "") {
+            // --- โหมด 1: แสดงหมวดหมู่ (Chips) เมื่อไม่ได้พิมพ์อะไร ---
+            displayArea.innerHTML = '<div class="section-title">เลือกหมวดหมู่</div>';
+            const grid = document.createElement('div');
+            grid.className = 'category-container';
+            
+            allCategories.forEach(cat => {
+                const count = stockData.filter(i => String(i.cat).trim() === String(cat).trim()).length;
+                const chip = document.createElement('div');
+                chip.className = 'cat-chip';
+                chip.innerHTML = `<b>${cat}</b><br><span class="cat-count">${count} รายการ</span>`;
+                chip.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
+                grid.appendChild(chip);
+            });
+            displayArea.appendChild(grid);
+        } else {
+            // --- โหมด 2: ค้นหารายการสินค้าตามชื่อ ---
+            displayArea.innerHTML = '<div class="section-title">ผลการค้นหาสินค้า</div>';
+            const filteredItems = stockData.filter(item => 
+                String(item.name).toLowerCase().includes(query) || 
+                String(item.id).toLowerCase().includes(query) ||
+                String(item.cat).toLowerCase().includes(query)
+            );
+
+            if (filteredItems.length === 0) {
+                displayArea.innerHTML += '<div style="text-align:center; padding:30px; color:#999;">❌ ไม่พบสินค้าที่ค้นหา</div>';
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                let imgArr = [];
+                try { imgArr = JSON.parse(item.img || "[]"); } catch(e) {}
+                const imgSrc = imgArr.length > 0 ? imgArr[0] : 'https://via.placeholder.com/50?text=No+Img';
+
+                const row = document.createElement('div');
+                row.className = 'search-result-item';
+                row.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(item.cat)}`; 
+                // หมายเหตุ: เมื่อกดแล้วจะพาไปหน้าหมวดหมู่ของสินค้านั้นเพื่อให้ดูรายละเอียด/แก้ไขได้
+                
+                row.innerHTML = `
+                    <img src="${imgSrc}">
+                    <div class="item-info">
+                        <b>${item.name}</b>
+                        <small>หมวด: ${item.cat} | รหัส: ${item.id} | คงเหลือ: ${item.qty}</small>
+                    </div>
+                `;
+                displayArea.appendChild(row);
+            });
+        }
     }
 
+    // โหลดข้อมูลจาก Cache ก่อนเพื่อความรวดเร็ว
     const cached = localStorage.getItem('stock_cache');
     if(cached) { stockData = JSON.parse(cached); render(); }
-    fetchData();
+    fetchData(); // ดึงข้อมูลใหม่จาก Server เสมอ
 </script>
 </body>
 </html>

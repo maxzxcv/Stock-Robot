@@ -2,57 +2,195 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เพิ่มสินค้า</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เพิ่มสต็อก - Repair Stock</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
-        body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; }
+        
+        body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; color: #2d3748; }
         .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1.5px solid #edf2f7; border-radius: 12px; box-sizing: border-box; font-family: 'Prompt'; }
-        .btn-submit { background: #2575fc; color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; }
-        #thumb-container { display: flex; gap: 10px; overflow-x: auto; margin-top: 10px; }
-        #thumb-container img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; }
+        
+        .header-flex { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; justify-content: center; }
+        .header-flex h2 { margin: 0; font-size: 22px; color: #2575fc; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #4a5568; }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1.5px solid #edf2f7; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-family: 'Prompt'; 
+            font-size: 15px;
+            transition: 0.3s;
+            background: #f8fafc;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2575fc;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1);
+        }
+
+        .btn-submit { 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 15px; 
+            font-weight: bold; 
+            font-size: 16px;
+            cursor: pointer; 
+            box-shadow: 0 10px 15px -3px rgba(37, 117, 252, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn-submit:disabled { background: #cbd5e0; cursor: not-allowed; }
+
+        #thumb-container { 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            margin-top: 10px; 
+            padding: 5px;
+        }
+        #thumb-container img { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 12px; 
+            object-fit: cover; 
+            border: 2px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h2 style="text-align:center;">เพิ่มสินค้าใหม่</h2>
+    <div class="header-flex">
+        <h2>🚀 เพิ่มรายการซ่อมใหม่</h2>
+    </div>
+
     <form id="addForm">
-        <div class="form-group"><label>📸 รูปภาพ</label><input type="file" id="files" accept="image/*" multiple onchange="handleFiles()"><div id="thumb-container"></div></div>
-        <div class="form-group"><label>📅 วันที่</label><input type="date" id="date" required></div>
-        <div class="form-group"><label>📁 หมวดหมู่</label><select id="cat" required><option value="drive 08">drive 08</option><option value="drive 16">drive 16</option><option value="drive 32">drive 32</option><option value="drive 48">drive 48</option><option value="drive 64">drive 64</option><option value="KPS">KPS</option><option value="MFC">MFC</option><option value="DSE">DSE</option><option value="Safety95">Safety95</option><option value="SafetyXP">SafetyXP</option><option value="Com95">Com95</option><option value="ComXP">ComXP</option><option value="การ์ดจอ">การ์ดจอ</option></select></div>
-        <div class="form-group"><label>🆔 รหัสสินค้า</label><input type="text" id="id" required></div>
-        <div class="form-group"><label>🔢 จำนวน</label><input type="number" id="qty" value="1"></div>
-        <div class="form-group"><label>🔧 รายละเอียด</label><input type="text" id="name" required></div>
-        <div class="form-group"><label>📍 สถานที่จัดเก็บ</label><input type="text" id="loc" required></div>
-        <button type="submit" class="btn-submit" id="btn">🚀 บันทึกข้อมูล</button>
+        <div class="form-group">
+            <label>📸 อัปโหลดรูปภาพ (หลายรูปได้)</label>
+            <input type="file" id="files" accept="image/*" multiple onchange="handleFiles()">
+            <div id="thumb-container"></div>
+        </div>
+
+        <div class="form-group">
+            <label>📅 วันที่รับเข้า</label>
+            <input type="date" id="date" required>
+        </div>
+
+        <div class="form-group">
+            <label>📁 หมวดหมู่สินค้า</label>
+            <select id="cat" required>
+                <option value="" disabled selected>เลือกหมวดหมู่...</option>
+                <option value="drive 08">drive 08</option>
+                <option value="drive 16">drive 16</option>
+                <option value="drive 32">drive 32</option>
+                <option value="drive 48">drive 48</option>
+                <option value="drive 64">drive 64</option>
+                <option value="KPS">KPS</option>
+                <option value="MFC">MFC</option>
+                <option value="DSE">DSE</option>
+                <option value="Safety95">Safety95</option>
+                <option value="SafetyXP">SafetyXP</option>
+                <option value="Com95">Com95</option>
+                <option value="ComXP">ComXP</option>
+                <option value="การ์ดจอ">การ์ดจอ</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>🆔 รหัสสินค้า / Serial Number</label>
+            <input type="text" id="id" placeholder="ระบุ ID สินค้า" required>
+        </div>
+
+        <div class="form-group">
+            <label>🛠️ อาการเสีย / ปัญหาที่พบ</label>
+            <textarea id="name" rows="3" placeholder="ระบุอาการเสียอย่างละเอียด" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📍 สถานที่จัดเก็บ (ตู้/ชั้น)</label>
+            <input type="text" id="loc" placeholder="ระบุตำแหน่งที่เก็บ" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn">💾 บันทึกข้อมูลซ่อม</button>
+        <button type="button" style="background:none; border:none; color:#718096; width:100%; margin-top:15px; cursor:pointer;" onclick="window.location.href='Search.html'">ยกเลิก</button>
     </form>
 </div>
+
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbybJjrPOTtgsFyVi-VBGHO1KMLOoxoaUWoAljEkqtYpg6F04XOXEC7qnfjtN5EjmjE/exec'; 
     document.getElementById('date').valueAsDate = new Date();
+    
     let images = [];
+
     function handleFiles() {
-        const files = document.getElementById('files').files;
+        const fileInput = document.getElementById('files');
+        const files = fileInput.files;
         const container = document.getElementById('thumb-container');
-        container.innerHTML = ''; images = [];
+        container.innerHTML = ''; 
+        images = [];
+
         Array.from(files).forEach(file => {
             const reader = new FileReader();
-            reader.onload = (e) => { images.push(e.target.result); const img = document.createElement('img'); img.src = e.target.result; container.appendChild(img); };
+            reader.onload = (e) => {
+                images.push(e.target.result);
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                container.appendChild(img);
+            };
             reader.readAsDataURL(file);
         });
     }
+
     document.getElementById('addForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn');
-        btn.disabled = true; btn.innerText = "กำลังบันทึก...";
-        const payload = { date: document.getElementById('date').value, cat: document.getElementById('cat').value, id: document.getElementById('id').value, name: document.getElementById('name').value, qty: document.getElementById('qty').value, loc: document.getElementById('loc').value, imgs: JSON.stringify(images) };
+        btn.disabled = true; 
+        btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
+
+        const payload = {
+            date: document.getElementById('date').value,
+            cat: document.getElementById('cat').value,
+            id: document.getElementById('id').value,
+            name: document.getElementById('name').value, // ตอนนี้คืออาการ
+            qty: "-", // ส่งค่าว่างหรือขีดไปแทนเนื่องจากเอาช่องจำนวนออก
+            loc: document.getElementById('loc').value,
+            imgs: JSON.stringify(images)
+        };
+
         try {
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert('บันทึกสำเร็จ!'); window.location.href = 'Search.html';
-        } catch (err) { alert('ผิดพลาด'); btn.disabled = false; }
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(payload) 
+            });
+            alert('✅ บันทึกรายการซ่อมสำเร็จ!'); 
+            window.location.href = 'Search.html';
+        } catch (err) { 
+            alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่'); 
+            btn.disabled = false; 
+            btn.innerText = "💾 บันทึกข้อมูลซ่อม";
+        }
     };
 </script>
 </body>

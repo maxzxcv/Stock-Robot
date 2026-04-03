@@ -2,23 +2,153 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Repair Stock</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Welcome - Repair Stock Solution</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
-        body { margin: 0; padding: 20px; font-family: 'Prompt', sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
-        .card { background: white; padding: 40px; border-radius: 24px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        img { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 20px; object-fit: cover; border: 5px solid #f0f2f5; }
-        .btn { display: block; padding: 15px; background: #2575fc; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: 0.3s; }
-        .btn:active { transform: scale(0.98); }
+
+        :root {
+            --primary-blue: #2575fc;
+            --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); /* soft blue split */
+            --text-dark: #2d3748;
+            --text-gray: #718096;
+            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            --btn-shadow: 0 10px 15px -3px rgba(37, 117, 252, 0.3), 0 4px 6px -2px rgba(37, 117, 252, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Prompt', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent scrollbar during animation */
+        }
+
+        /* Animation for Card Load */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            animation: slideUpFade 0.6s ease-out forwards; /* Load animation */
+            border: 1px solid rgba(255, 255, 255, 0.6); /* glass effect border */
+        }
+
+        .logo-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover effect on Logo */
+        .card:hover img {
+            transform: scale(1.05) rotate(3deg);
+        }
+
+        h2 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-weight: 300;
+            margin: 0 0 40px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: block;
+            padding: 18px;
+            background: var(--primary-blue);
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: var(--btn-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hover animation for Button */
+        @media (hover: hover) {
+            .btn:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 20px 25px -5px rgba(37, 117, 252, 0.4), 0 10px 10px -5px rgba(37, 117, 252, 0.2);
+            }
+        }
+
+        /* Active/Click animation for Button */
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 5px 10px -3px rgba(37, 117, 252, 0.3);
+            transition: all 0.1s ease;
+        }
+        
+        /* Optional: footer or company name */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            color: var(--text-gray);
+            opacity: 0.7;
+        }
+
     </style>
 </head>
 <body>
+
     <div class="card">
-        <img src="Logo.jpg" onerror="this.src='https://via.placeholder.com/120?text=STOCK'">
+        <div class="logo-wrapper">
+            <img src="Logo.jpg" onerror="this.src='https://via.placeholder.com/130x130/2575fc/ffffff?text=STOCK'">
+        </div>
+        
         <h2>Repair Stock</h2>
-        <p style="color: #666; margin-bottom: 30px;">ระบบจัดการอะไหล่และอุปกรณ์</p>
-        <a href="Search.html" class="btn">เข้าสู่ระบบ</a>
+        <p class="subtitle">ระบบจัดการอะไหล่และอุปกรณ์<br>Robot Repair Center</p>
+        
+        <a href="Search.html" class="btn">เข้าสู่ระบบจัดการสต็อก</a>
     </div>
+
+    <div class="footer">© 2024 Robot Repair Center</div>
+
 </body>
 </html>
