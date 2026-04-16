@@ -3,147 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>คลังสินค้า - ค้นหา</title>
+    <title>คลังสินค้า - ระบบจัดการอะไหล่</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
-        body { font-family: 'Prompt', sans-serif; padding: 15px; background: #f4f7f6; margin: 0; color: #333; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-nav { background: #28a745; color: white; text-decoration: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 14px; }
         
-        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 10px; box-sizing: border-box; font-family: 'Prompt'; font-size: 16px; outline: none; }
-        .search-box:focus { border-color: #2575fc; }
+        :root {
+            --primary: #2575fc;
+            --success: #28a745;
+            --bg: #f4f7f6;
+            --text-main: #333;
+            --text-sub: #718096;
+        }
 
-        .refresh-text { font-size: 11px; color: #999; text-align: right; margin-bottom: 15px; }
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            padding: 15px; 
+            background: var(--bg); 
+            margin: 0; 
+            color: var(--text-main); 
+        }
 
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+
+        /* Header */
+        .header-flex { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        
+        .btn-nav { 
+            background: var(--success); 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn-nav:active { transform: scale(0.95); }
+
+        /* Search Box */
+        .search-box { 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 15px; 
+            border: 2px solid #edf2f7; 
+            margin-bottom: 10px; 
+            box-sizing: border-box; 
+            font-family: 'Prompt'; 
+            font-size: 16px; 
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box:focus { border-color: var(--primary); background: #fff; }
+
+        /* Status & Loading */
+        .refresh-text { font-size: 12px; color: #999; text-align: right; margin-bottom: 15px; height: 18px; }
+        .loading-bar { height: 4px; width: 100%; background: #eee; overflow: hidden; margin-bottom: 20px; border-radius: 10px; display: none; }
+        .loading-progress { height: 100%; background: var(--primary); width: 40%; animation: load 1.5s infinite linear; }
+        @keyframes load { from { margin-left: -40%; } to { margin-left: 100%; } }
+
+        /* Category Grid */
+        .section-title { font-size: 15px; color: var(--text-sub); margin: 20px 0 10px 5px; font-weight: 600; }
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .cat-chip { background: #f8faff; padding: 15px 10px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; }
-        .cat-count { background: #2575fc; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; display: inline-block; margin-top: 5px; }
-
-        .search-result-item { background: white; padding: 12px; border-radius: 12px; border: 1px solid #edf2f7; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .search-result-item img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: #eee; }
-        .item-info b { color: #2d3748; display: block; font-size: 15px; }
-        .item-info small { color: #718096; font-size: 12px; }
-        .section-title { font-size: 14px; color: #718096; margin-bottom: 10px; font-weight: 600; display: flex; justify-content: space-between; }
         
-        /* สไตล์ตอนกำลังโหลด */
-        .loading-bar { height: 3px; width: 100%; background: #eee; overflow: hidden; margin-bottom: 20px; border-radius: 10px; display: none; }
-        .loading-progress { height: 100%; background: #2575fc; width: 30%; animation: load 1s infinite linear; }
-        @keyframes load { from { margin-left: -30%; } to { margin-left: 100%; } }
+        .cat-chip { 
+            background: #ffffff; 
+            padding: 16px 10px; 
+            border-radius: 18px; 
+            border: 1px solid #e2e8f0; 
+            text-align: center; 
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .cat-chip:active { background: #f0f5ff; transform: translateY(2px); }
+        .cat-chip b { display: block; font-size: 16px; color: #2d3748; }
+        .cat-count { 
+            background: var(--primary); 
+            color: white; 
+            padding: 2px 12px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            display: inline-block; 
+            margin-top: 8px; 
+        }
+
+        /* Result Items */
+        .search-result-item { 
+            background: white; 
+            padding: 12px; 
+            border-radius: 16px; 
+            border: 1px solid #edf2f7; 
+            margin-bottom: 10px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .search-result-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #f8f9fa; }
+        .item-info b { color: #2d3748; display: block; font-size: 16px; margin-bottom: 4px; }
+        .item-info small { color: var(--text-sub); font-size: 13px; display: block; }
+        .qty-badge { margin-left: auto; background: #f1f5f9; padding: 5px 12px; border-radius: 10px; font-weight: 600; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-flex">
-        <h2 style="margin:0; color:#2575fc;">📦 คลังอะไหล่</h2>
+        <h2 style="margin:0; color:var(--primary);">📦 คลังอะไหล่</h2>
         <a href="add_Item.html" class="btn-nav">+ เพิ่มของ</a>
     </div>
 
-    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="พิมพ์ชื่อสินค้า, อาการ, หรือหมวดหมู่...">
+    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="กำลังโหลดข้อมูล..." disabled>
+    
     <div id="loader" class="loading-bar"><div class="loading-progress"></div></div>
-    <div id="refreshTime" class="refresh-text">กำลังตรวจสอบข้อมูลใหม่...</div>
+    <div id="statusText" class="refresh-text">⏳ กำลังเตรียมฐานข้อมูล...</div>
 
-    <div id="displayArea"></div>
+    <div id="displayArea">
+        </div>
 </div>
 
 <script>
-    // 1. เปลี่ยน URL นี้เป็น URL ล่าสุดจากการ Deploy (New Deployment) เสมอ!
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwb9gvcoqb9UCzgRe16y3pMqzJAnJwpYpIQZETLgFbULTo70JXJoFwCZiDoEME7giQygQ/exec'; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx4pf19QBHE8ekdpGL0yQGpJOCnM3WUEO7IDoMQhTKmHKXxsqeh7QGKRHdTfEdqvFu29Q/exec'; 
     const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
     
     let stockData = [];
 
-    // ดึงข้อมูลจาก Cache มาแสดงก่อนเพื่อความเร็ว
+    // เริ่มทำงานทันทีที่เปิดหน้า
     function init() {
         const cached = localStorage.getItem('stock_cache');
         if (cached) {
             stockData = JSON.parse(cached);
-            render();
-            document.getElementById('refreshTime').innerText = "แสดงข้อมูลจากเครื่อง (กำลังโหลดใหม่...)";
+            document.getElementById('searchInput').disabled = false;
+            document.getElementById('searchInput').placeholder = "ค้นหาชื่ออะไหล่ หรือหมวดหมู่...";
+            render(); // แสดงผลจาก Cache ทันที
         }
-        fetchData();
+        fetchData(); // ดึงข้อมูลสดจาก Server
     }
 
     async function fetchData() {
-        document.getElementById('loader').style.display = 'block';
+        const loader = document.getElementById('loader');
+        const status = document.getElementById('statusText');
+        loader.style.display = 'block';
+
         try {
-            // บังคับไม่ใช้ Cache ด้วยการเติม Timestamp
-            const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+            const response = await fetch(`${scriptURL}?t=${Date.now()}`);
             const data = await response.json();
 
             if (data && data.length > 0) {
                 stockData = data;
                 localStorage.setItem('stock_cache', JSON.stringify(data));
-                document.getElementById('refreshTime').innerText = "อัปเดตล่าสุด: " + new Date().toLocaleTimeString();
                 render();
+                status.innerText = "✅ ข้อมูลอัปเดตล่าสุดแล้ว";
             }
         } catch (e) {
             console.error("Fetch Error:", e);
-            document.getElementById('refreshTime').innerText = "⚠️ โหลดข้อมูลใหม่ไม่สำเร็จ";
+            status.innerText = "⚠️ โหมดออฟไลน์ (ใช้ข้อมูลล่าสุดในเครื่อง)";
         } finally {
-            document.getElementById('loader').style.display = 'none';
+            loader.style.display = 'none';
+            document.getElementById('searchInput').disabled = false;
         }
     }
 
     function render() {
-        const displayArea = document.getElementById('displayArea');
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const displayArea = document.getElementById('displayArea');
         displayArea.innerHTML = '';
 
         if (query === "") {
-            // --- แสดงโหมดหมวดหมู่ ---
-            displayArea.innerHTML = '<div class="section-title"><span>เลือกหมวดหมู่</span></div>';
+            // โหมดแสดงหมวดหมู่ (หน้าแรก)
+            displayArea.innerHTML = '<div class="section-title">เลือกหมวดหมู่</div>';
             const grid = document.createElement('div');
             grid.className = 'category-container';
-            
+
             allCategories.forEach(cat => {
-                // กรองข้อมูลโดยลบช่องว่างออกเพื่อความแม่นยำ
-                const count = stockData.filter(i => String(i.cat).trim() === String(cat).trim()).length;
-                const chip = document.createElement('div');
-                chip.className = 'cat-chip';
-                chip.innerHTML = `<b>${cat}</b><br><span class="cat-count">${count} รายการ</span>`;
-                chip.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
-                grid.appendChild(chip);
+                const count = stockData.filter(item => item.category === cat).length;
+                const card = document.createElement('div');
+                card.className = 'cat-chip';
+                card.innerHTML = `
+                    <b>${cat}</b>
+                    <div class="cat-count">${count} รายการ</div>
+                `;
+                card.onclick = () => {
+                    document.getElementById('searchInput').value = cat;
+                    render();
+                };
+                grid.appendChild(card);
             });
             displayArea.appendChild(grid);
         } else {
-            // --- แสดงโหมดค้นหาสินค้า ---
-            displayArea.innerHTML = '<div class="section-title">ผลการค้นหา</div>';
-            const filteredItems = stockData.filter(item => 
-                String(item.name || "").toLowerCase().includes(query) || 
-                String(item.id || "").toLowerCase().includes(query) ||
-                String(item.cat || "").toLowerCase().includes(query)
+            // โหมดค้นหา
+            const filtered = stockData.filter(item => 
+                (item.name && item.name.toLowerCase().includes(query)) || 
+                (item.category && item.category.toLowerCase().includes(query))
             );
 
-            if (filteredItems.length === 0) {
-                displayArea.innerHTML += '<div style="text-align:center; padding:30px; color:#999;">❌ ไม่พบข้อมูล</div>';
+            displayArea.innerHTML = `<div class="section-title">พบ ${filtered.length} รายการ</div>`;
+
+            if (filtered.length === 0) {
+                displayArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:20px;">ไม่พบข้อมูลที่ค้นหา</p>`;
                 return;
             }
 
-            filteredItems.forEach(item => {
-                let imgArr = [];
-                try { imgArr = JSON.parse(item.img || "[]"); } catch(e) {}
-                const imgSrc = imgArr.length > 0 ? imgArr[0] : 'https://via.placeholder.com/60?text=No+Img';
-
+            filtered.forEach(item => {
                 const row = document.createElement('div');
                 row.className = 'search-result-item';
-                row.onclick = () => location.href = `view_category.html?cat=${encodeURIComponent(item.cat)}`; 
-                
                 row.innerHTML = `
-                    <img src="${imgSrc}">
+                    <img src="${item.image || 'https://via.placeholder.com/60?text=No+Img'}" onerror="this.src='https://via.placeholder.com/60?text=Error'">
                     <div class="item-info">
                         <b>${item.name || 'ไม่มีชื่อ'}</b>
-                        <small>หมวด: ${item.cat} | ID: ${item.id} | ที่เก็บ: ${item.loc}</small>
+                        <small>หมวด: ${item.category || '-'}</small>
                     </div>
+                    <div class="qty-badge">${item.qty || 0}</div>
                 `;
                 displayArea.appendChild(row);
             });
         }
     }
 
-    // เริ่มทำงาน
+    // รันฟังก์ชันเริ่มต้น
     init();
 </script>
+
 </body>
 </html>
