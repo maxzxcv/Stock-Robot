@@ -198,37 +198,31 @@
     }
 
     async function saveEdit() {
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
 
-        const updatedItem = {
-            action: "edit",
-            oldId: currentItem.id,
-            oldName: currentItem.name,
-            date: currentItem.date,
-            cat: currentItem.cat,
-            id: document.getElementById('eId').value,
-            name: document.getElementById('eName').value,
-            qty: document.getElementById('eQty').value,
-            loc: document.getElementById('eLoc').value,
-            imgs: JSON.stringify(editImages) 
-        };
+    const updatedItem = {
+        action: "edit",
+        // ... (ข้อมูลอื่นๆ เหมือนเดิม)
+        imgs: JSON.stringify(editImages) 
+    };
 
-        try {
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
-            alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
-            
-            // อัปเดต Cache ทันที
-            const idx = stockData.findIndex(i => i.id == currentItem.id && i.name == currentItem.name);
-            stockData[idx] = { ...updatedItem, img: JSON.stringify(editImages) };
-            localStorage.setItem('stock_cache', JSON.stringify(stockData));
-            
-            location.reload();
-        } catch (e) {
-            alert('เกิดข้อผิดพลาด');
-            btn.disabled = false; btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
-        }
+    try {
+        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
+        
+        // --- ส่วนที่ต้องเพิ่ม/แก้ไข ---
+        // 1. ล้าง Cache ทั้งหมดเพื่อให้หน้า Search โหลดข้อมูลใหม่จาก Server
+        localStorage.removeItem('stock_cache'); 
+        
+        alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
+        
+        // 2. กลับไปหน้า Search เพื่อบังคับให้โหลดข้อมูลใหม่ล่าสุด
+        window.location.href = 'Search.html'; 
+    } catch (e) {
+        alert('เกิดข้อผิดพลาด');
+        btn.disabled = false; btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
     }
+}
 
     function updateSlider() {
         const imgTag = document.getElementById('mImg');
