@@ -36,11 +36,10 @@
         .btn-delete { background: #fff5f5; color: #e53e3e; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
         .btn-close { grid-column: span 2; padding: 12px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 10px; cursor: pointer; }
         
-        /* สไตล์สำหรับการจัดการรูปในโหมดแก้ไข */
         #edit-thumb-container { display: flex; gap: 10px; overflow-x: auto; margin-top: 5px; margin-bottom: 15px; padding: 5px; }
         .thumb-wrapper { position: relative; flex-shrink: 0; }
         .thumb-wrapper img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 2px solid #eee; }
-        .del-img-btn { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+        .del-img-btn { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
         .upload-placeholder { width: 80px; height: 80px; border: 2px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #999; cursor: pointer; flex-shrink: 0; }
     </style>
@@ -49,7 +48,7 @@
 
     <div class="header">
         <a href="Search.html" class="btn-back"><span>←</span> กลับ</a>
-        <h2 id="catTitle">หมวดหมู่</h2>
+        <h2 id="catTitle">📁 หมวดหมู่</h2>
     </div>
 
     <div id="list"></div>
@@ -78,13 +77,13 @@
                 <div id="editMode" class="edit-mode">
                     <h3 style="margin-top:0;">✏️ แก้ไขรายละเอียด</h3>
                     
-                    <label>📸 จัดการรูปภาพ (คลิก X เพื่อลบ / คลิก + เพื่อเพิ่ม)</label>
+                    <label>📸 จัดการรูปภาพ (ย่อขนาดอัตโนมัติ)</label>
                     <div id="edit-thumb-container"></div>
                     <input type="file" id="eFiles" accept="image/*" multiple style="display:none" onchange="addNewFiles()">
                     
                     <label>ชื่อสินค้า</label><input type="text" id="eName">
-                    <label>รหัสสินค้า (ID)</label><input type="text" id="eId">
-                    <label>จำนวน</label><input type="text" id="eQty">
+                    <label>รหัสสินค้า (ID) - แก้ไขไม่ได้</label><input type="text" id="eId" readonly style="background:#f0f0f0;">
+                    <label>จำนวน</label><input type="number" id="eQty">
                     <label>ที่เก็บ</label><input type="text" id="eLoc">
                     <div class="btn-group">
                         <button class="btn-save" id="saveBtn" onclick="saveEdit()">💾 บันทึกการเปลี่ยนแปลง</button>
@@ -103,6 +102,34 @@
     let currentImages = [], currentIndex = 0, currentItem = null;
     let editImages = []; 
     let stockData = JSON.parse(localStorage.getItem('stock_cache') || "[]");
+
+    // ฟังก์ชันย่อขนาดรูปภาพ
+    function resizeImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; 
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // ย่อคุณภาพเหลือ 70%
+                };
+            };
+        });
+    }
 
     function renderList() {
         const list = document.getElementById('list');
@@ -154,11 +181,9 @@
         if(isEdit) showEditThumbs();
     }
 
-    // ฟังก์ชันแสดงรูปภาพในโหมดแก้ไข พร้อมปุ่มลบ
     function showEditThumbs() {
         const container = document.getElementById('edit-thumb-container');
         container.innerHTML = '';
-        
         editImages.forEach((src, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'thumb-wrapper';
@@ -168,8 +193,6 @@
             `;
             container.appendChild(wrapper);
         });
-
-        // ปุ่มบวกสำหรับเพิ่มรูป
         const addBtn = document.createElement('div');
         addBtn.className = 'upload-placeholder';
         addBtn.innerHTML = '<b>+</b>';
@@ -177,62 +200,53 @@
         container.appendChild(addBtn);
     }
 
-    // ฟังก์ชันลบรูปออกจาก Array ชั่วคราว
     function removeImage(index) {
         editImages.splice(index, 1);
         showEditThumbs();
     }
 
-    // ฟังก์ชันเพิ่มรูปเข้าไปใน Array ชั่วคราว
-    function addNewFiles() {
+    async function addNewFiles() {
         const files = document.getElementById('eFiles').files;
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                editImages.push(e.target.result);
-                showEditThumbs();
-            };
-            reader.readAsDataURL(file);
-        });
-        document.getElementById('eFiles').value = ''; // ล้างค่า input เพื่อให้เลือกไฟล์เดิมซ้ำได้
+        for (let file of files) {
+            const resizedData = await resizeImage(file);
+            editImages.push(resizedData);
+        }
+        showEditThumbs();
+        document.getElementById('eFiles').value = ''; 
     }
 
     async function saveEdit() {
-    const btn = document.getElementById('saveBtn');
-    btn.disabled = true; 
-    btn.innerText = "⏳ กำลังบันทึก...";
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true; 
+        btn.innerText = "⏳ กำลังบันทึก...";
 
-    // ตรวจสอบว่า editImages มีข้อมูลรูปภาพใหม่จริงหรือไม่
-    console.log("New images to save:", editImages);
+        const updatedItem = {
+            action: "edit",
+            id: document.getElementById('eId').value,
+            name: document.getElementById('eName').value,
+            qty: document.getElementById('eQty').value,
+            loc: document.getElementById('eLoc').value,
+            cat: cat,
+            img: JSON.stringify(editImages) 
+        };
 
-    const updatedItem = {
-        action: "edit",
-        id: document.getElementById('eId').value,      // ต้องส่ง ID ไปเพื่อระบุแถว
-        name: document.getElementById('eName').value,
-        qty: document.getElementById('eQty').value,
-        loc: document.getElementById('eLoc').value,
-        cat: cat, 
-        imgs: JSON.stringify(editImages)               // ส่ง Array รูปภาพใหม่ในรูปแบบ String
-    };
-
-    try {
-        await fetch(scriptURL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: JSON.stringify(updatedItem) 
-        });
-        
-        // ล้าง Cache เพื่อให้หน้าอื่นดึงรูปใหม่ไปแสดง
-        localStorage.removeItem('stock_cache'); 
-        
-        alert('บันทึกรูปภาพและข้อมูลเรียบร้อย!');
-        window.location.href = 'Search.html'; 
-    } catch (e) {
-        alert('เกิดข้อผิดพลาด');
-        btn.disabled = false; 
-        btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
+        try {
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(updatedItem) 
+            });
+            
+            localStorage.removeItem('stock_cache'); 
+            alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
+            window.location.href = 'Search.html'; 
+        } catch (e) {
+            alert('เกิดข้อผิดพลาด');
+            btn.disabled = false; 
+            btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
+        }
     }
-}
+
     function updateSlider() {
         const imgTag = document.getElementById('mImg');
         imgTag.src = currentImages[currentIndex] || 'https://via.placeholder.com/400x300?text=No+Image';
@@ -249,10 +263,15 @@
     async function deleteItem(id, name) {
         if (!confirm(`ต้องการลบ "${name}"?`)) return;
         try {
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", id: id, name: name }) });
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({ action: "delete", id: id }) 
+            });
+            localStorage.removeItem('stock_cache');
             alert('ลบเรียบร้อย');
-            location.reload();
-        } catch (e) {}
+            window.location.href = 'Search.html';
+        } catch (e) { alert('ลบไม่สำเร็จ'); }
     }
 
     renderList();
