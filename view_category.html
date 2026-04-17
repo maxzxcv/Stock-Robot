@@ -36,8 +36,13 @@
         .btn-delete { background: #fff5f5; color: #e53e3e; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
         .btn-close { grid-column: span 2; padding: 12px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 10px; cursor: pointer; }
         
-        #edit-thumb-container { display: flex; gap: 8px; overflow-x: auto; margin-top: 5px; margin-bottom: 15px; }
-        #edit-thumb-container img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
+        /* สไตล์สำหรับการจัดการรูปในโหมดแก้ไข */
+        #edit-thumb-container { display: flex; gap: 10px; overflow-x: auto; margin-top: 5px; margin-bottom: 15px; padding: 5px; }
+        .thumb-wrapper { position: relative; flex-shrink: 0; }
+        .thumb-wrapper img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 2px solid #eee; }
+        .del-img-btn { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+        
+        .upload-placeholder { width: 80px; height: 80px; border: 2px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #999; cursor: pointer; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -72,16 +77,17 @@
 
                 <div id="editMode" class="edit-mode">
                     <h3 style="margin-top:0;">✏️ แก้ไขรายละเอียด</h3>
-                    <label>📸 แก้ไขรูปภาพ (เลือกใหม่เพื่อแทนที่ของเดิม)</label>
-                    <input type="file" id="eFiles" accept="image/*" multiple onchange="handleEditFiles()">
+                    
+                    <label>📸 จัดการรูปภาพ (คลิก X เพื่อลบ / คลิก + เพื่อเพิ่ม)</label>
                     <div id="edit-thumb-container"></div>
+                    <input type="file" id="eFiles" accept="image/*" multiple style="display:none" onchange="addNewFiles()">
                     
                     <label>ชื่อสินค้า</label><input type="text" id="eName">
                     <label>รหัสสินค้า (ID)</label><input type="text" id="eId">
                     <label>จำนวน</label><input type="text" id="eQty">
                     <label>ที่เก็บ</label><input type="text" id="eLoc">
                     <div class="btn-group">
-                        <button class="btn-save" id="saveBtn" onclick="saveEdit()">💾 บันทึก</button>
+                        <button class="btn-save" id="saveBtn" onclick="saveEdit()">💾 บันทึกการเปลี่ยนแปลง</button>
                         <button class="btn-close" style="grid-column: span 1;" onclick="toggleEdit(false)">ยกเลิก</button>
                     </div>
                 </div>
@@ -90,13 +96,12 @@
     </div>
 
 <script>
-    // ใช้ scriptURL เดิมของคุณ
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwFHTpy_PpSNvElpI91MwhnF6AXhuiEM0--KlJxwzH2LFQsbYRofVS9JSIr3ujpyXMo/exec';
     const cat = new URLSearchParams(window.location.search).get('cat');
     document.getElementById('catTitle').innerText = '📁 ' + cat;
 
     let currentImages = [], currentIndex = 0, currentItem = null;
-    let editImages = []; // สำหรับเก็บรูปใหม่ที่จะอัปโหลดแทนที่
+    let editImages = []; 
     let stockData = JSON.parse(localStorage.getItem('stock_cache') || "[]");
 
     function renderList() {
@@ -135,8 +140,7 @@
         document.getElementById('eLoc').value = item.loc;
 
         currentImages = JSON.parse(item.img || "[]");
-        editImages = [...currentImages]; // เริ่มต้นให้ editImages มีรูปเดิมอยู่ก่อน
-        showEditThumbs();
+        editImages = [...currentImages]; 
         
         currentIndex = 0;
         updateSlider();
@@ -147,39 +151,55 @@
     function toggleEdit(isEdit) {
         document.getElementById('viewMode').style.display = isEdit ? 'none' : 'block';
         document.getElementById('editMode').style.display = isEdit ? 'block' : 'none';
-        if(!isEdit) {
-            document.getElementById('eFiles').value = '';
-            editImages = JSON.parse(currentItem.img || "[]");
-            showEditThumbs();
-        }
+        if(isEdit) showEditThumbs();
     }
 
-    function handleEditFiles() {
-        const files = document.getElementById('eFiles').files;
+    // ฟังก์ชันแสดงรูปภาพในโหมดแก้ไข พร้อมปุ่มลบ
+    function showEditThumbs() {
         const container = document.getElementById('edit-thumb-container');
-        editImages = []; // ถ้าเลือกใหม่ จะล้างรูปเดิมออก (หรือจะใช้ push ถ้าอยากเพิ่มต่อ)
         container.innerHTML = '';
+        
+        editImages.forEach((src, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'thumb-wrapper';
+            wrapper.innerHTML = `
+                <img src="${src}">
+                <button class="del-img-btn" onclick="removeImage(${index})">×</button>
+            `;
+            container.appendChild(wrapper);
+        });
 
+        // ปุ่มบวกสำหรับเพิ่มรูป
+        const addBtn = document.createElement('div');
+        addBtn.className = 'upload-placeholder';
+        addBtn.innerHTML = '<b>+</b>';
+        addBtn.onclick = () => document.getElementById('eFiles').click();
+        container.appendChild(addBtn);
+    }
+
+    // ฟังก์ชันลบรูปออกจาก Array ชั่วคราว
+    function removeImage(index) {
+        editImages.splice(index, 1);
+        showEditThumbs();
+    }
+
+    // ฟังก์ชันเพิ่มรูปเข้าไปใน Array ชั่วคราว
+    function addNewFiles() {
+        const files = document.getElementById('eFiles').files;
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 editImages.push(e.target.result);
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                container.appendChild(img);
+                showEditThumbs();
             };
             reader.readAsDataURL(file);
         });
-    }
-
-    function showEditThumbs() {
-        const container = document.getElementById('edit-thumb-container');
-        container.innerHTML = editImages.map(src => `<img src="${src}">`).join('');
+        document.getElementById('eFiles').value = ''; // ล้างค่า input เพื่อให้เลือกไฟล์เดิมซ้ำได้
     }
 
     async function saveEdit() {
         const btn = document.getElementById('saveBtn');
-        btn.disabled = true; btn.innerText = "กำลังบันทึก...";
+        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
 
         const updatedItem = {
             action: "edit",
@@ -191,22 +211,22 @@
             name: document.getElementById('eName').value,
             qty: document.getElementById('eQty').value,
             loc: document.getElementById('eLoc').value,
-            imgs: JSON.stringify(editImages) // ส่งรูปภาพใหม่ (หรือเดิมถ้าไม่ได้แก้) ไปยัง Sheet
+            imgs: JSON.stringify(editImages) 
         };
 
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
-            alert('แก้ไขข้อมูลสำเร็จ!');
+            alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
             
-            // อัปเดตข้อมูลใน Local Cache เพื่อให้แสดงผลทันทีโดยไม่ต้องรอโหลดใหม่จาก Sheet
+            // อัปเดต Cache ทันที
             const idx = stockData.findIndex(i => i.id == currentItem.id && i.name == currentItem.name);
             stockData[idx] = { ...updatedItem, img: JSON.stringify(editImages) };
             localStorage.setItem('stock_cache', JSON.stringify(stockData));
             
             location.reload();
         } catch (e) {
-            alert('เกิดข้อผิดพลาดในการบันทึก');
-            btn.disabled = false; btn.innerText = "💾 บันทึก";
+            alert('เกิดข้อผิดพลาด');
+            btn.disabled = false; btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
         }
     }
 
@@ -227,11 +247,9 @@
         if (!confirm(`ต้องการลบ "${name}"?`)) return;
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", id: id, name: name }) });
-            alert('ลบข้อมูลเรียบร้อยแล้ว');
+            alert('ลบเรียบร้อย');
             location.reload();
-        } catch (e) {
-            alert('เกิดข้อผิดพลาดในการลบ');
-        }
+        } catch (e) {}
     }
 
     renderList();
