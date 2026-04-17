@@ -25,7 +25,7 @@
         .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
         
         .detail-body { padding: 20px; }
-        .edit-mode { display: none; } /* ซ่อนฟอร์มแก้ไขในตอนแรก */
+        .edit-mode { display: none; } 
         
         input, select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Prompt'; box-sizing: border-box; }
         label { font-size: 14px; font-weight: 600; color: #666; }
@@ -35,6 +35,9 @@
         .btn-edit-trigger { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .btn-delete { background: #fff5f5; color: #e53e3e; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
         .btn-close { grid-column: span 2; padding: 12px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 10px; cursor: pointer; }
+        
+        #edit-thumb-container { display: flex; gap: 8px; overflow-x: auto; margin-top: 5px; margin-bottom: 15px; }
+        #edit-thumb-container img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -69,9 +72,13 @@
 
                 <div id="editMode" class="edit-mode">
                     <h3 style="margin-top:0;">✏️ แก้ไขรายละเอียด</h3>
+                    <label>📸 แก้ไขรูปภาพ (เลือกใหม่เพื่อแทนที่ของเดิม)</label>
+                    <input type="file" id="eFiles" accept="image/*" multiple onchange="handleEditFiles()">
+                    <div id="edit-thumb-container"></div>
+                    
                     <label>ชื่อสินค้า</label><input type="text" id="eName">
                     <label>รหัสสินค้า (ID)</label><input type="text" id="eId">
-                    <label>จำนวน</label><input type="number" id="eQty">
+                    <label>จำนวน</label><input type="text" id="eQty">
                     <label>ที่เก็บ</label><input type="text" id="eLoc">
                     <div class="btn-group">
                         <button class="btn-save" id="saveBtn" onclick="saveEdit()">💾 บันทึก</button>
@@ -83,11 +90,13 @@
     </div>
 
 <script>
+    // ใช้ scriptURL เดิมของคุณ
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwFHTpy_PpSNvElpI91MwhnF6AXhuiEM0--KlJxwzH2LFQsbYRofVS9JSIr3ujpyXMo/exec';
     const cat = new URLSearchParams(window.location.search).get('cat');
     document.getElementById('catTitle').innerText = '📁 ' + cat;
 
     let currentImages = [], currentIndex = 0, currentItem = null;
+    let editImages = []; // สำหรับเก็บรูปใหม่ที่จะอัปโหลดแทนที่
     let stockData = JSON.parse(localStorage.getItem('stock_cache') || "[]");
 
     function renderList() {
@@ -120,13 +129,15 @@
         document.getElementById('vQty').innerText = item.qty;
         document.getElementById('vLoc').innerText = item.loc;
         
-        // ใส่ข้อมูลลงฟอร์มรอไว้
         document.getElementById('eName').value = item.name;
         document.getElementById('eId').value = item.id;
         document.getElementById('eQty').value = item.qty;
         document.getElementById('eLoc').value = item.loc;
 
         currentImages = JSON.parse(item.img || "[]");
+        editImages = [...currentImages]; // เริ่มต้นให้ editImages มีรูปเดิมอยู่ก่อน
+        showEditThumbs();
+        
         currentIndex = 0;
         updateSlider();
         document.getElementById('delBtn').onclick = () => deleteItem(item.id, item.name);
@@ -136,6 +147,34 @@
     function toggleEdit(isEdit) {
         document.getElementById('viewMode').style.display = isEdit ? 'none' : 'block';
         document.getElementById('editMode').style.display = isEdit ? 'block' : 'none';
+        if(!isEdit) {
+            document.getElementById('eFiles').value = '';
+            editImages = JSON.parse(currentItem.img || "[]");
+            showEditThumbs();
+        }
+    }
+
+    function handleEditFiles() {
+        const files = document.getElementById('eFiles').files;
+        const container = document.getElementById('edit-thumb-container');
+        editImages = []; // ถ้าเลือกใหม่ จะล้างรูปเดิมออก (หรือจะใช้ push ถ้าอยากเพิ่มต่อ)
+        container.innerHTML = '';
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                editImages.push(e.target.result);
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function showEditThumbs() {
+        const container = document.getElementById('edit-thumb-container');
+        container.innerHTML = editImages.map(src => `<img src="${src}">`).join('');
     }
 
     async function saveEdit() {
@@ -144,7 +183,7 @@
 
         const updatedItem = {
             action: "edit",
-            oldId: currentItem.id, // ใช้ค้นหาใน Sheet
+            oldId: currentItem.id,
             oldName: currentItem.name,
             date: currentItem.date,
             cat: currentItem.cat,
@@ -152,21 +191,21 @@
             name: document.getElementById('eName').value,
             qty: document.getElementById('eQty').value,
             loc: document.getElementById('eLoc').value,
-            imgs: currentItem.img // ใช้รูปเดิม
+            imgs: JSON.stringify(editImages) // ส่งรูปภาพใหม่ (หรือเดิมถ้าไม่ได้แก้) ไปยัง Sheet
         };
 
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
             alert('แก้ไขข้อมูลสำเร็จ!');
             
-            // อัปเดตใน Cache
+            // อัปเดตข้อมูลใน Local Cache เพื่อให้แสดงผลทันทีโดยไม่ต้องรอโหลดใหม่จาก Sheet
             const idx = stockData.findIndex(i => i.id == currentItem.id && i.name == currentItem.name);
-            stockData[idx] = { ...updatedItem, img: currentItem.img };
+            stockData[idx] = { ...updatedItem, img: JSON.stringify(editImages) };
             localStorage.setItem('stock_cache', JSON.stringify(stockData));
             
             location.reload();
         } catch (e) {
-            alert('เกิดข้อผิดพลาด');
+            alert('เกิดข้อผิดพลาดในการบันทึก');
             btn.disabled = false; btn.innerText = "💾 บันทึก";
         }
     }
@@ -177,6 +216,7 @@
     }
 
     function changeImg(dir) {
+        if(currentImages.length === 0) return;
         currentIndex = (currentIndex + dir + currentImages.length) % currentImages.length;
         updateSlider();
     }
@@ -185,9 +225,13 @@
 
     async function deleteItem(id, name) {
         if (!confirm(`ต้องการลบ "${name}"?`)) return;
-        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", id: id, name: name }) });
-        alert('ลบแล้ว');
-        location.reload();
+        try {
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", id: id, name: name }) });
+            alert('ลบข้อมูลเรียบร้อยแล้ว');
+            location.reload();
+        } catch (e) {
+            alert('เกิดข้อผิดพลาดในการลบ');
+        }
     }
 
     renderList();
