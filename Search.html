@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>คลังสินค้า - ระบบจัดการอะไหล่</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
         
         :root {
             --primary: #2575fc;
@@ -31,7 +32,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
         }
 
-        /* Header */
         .header-flex { 
             display: flex; 
             justify-content: space-between; 
@@ -50,9 +50,6 @@
             transition: 0.2s;
         }
 
-        .btn-nav:active { transform: scale(0.95); }
-
-        /* Search Box */
         .search-box { 
             width: 100%; 
             padding: 15px; 
@@ -63,18 +60,13 @@
             font-family: 'Prompt'; 
             font-size: 16px; 
             outline: none;
-            transition: 0.3s;
         }
 
-        .search-box:focus { border-color: var(--primary); background: #fff; }
-
-        /* Status & Loading */
-        .refresh-text { font-size: 12px; color: #999; text-align: right; margin-bottom: 15px; height: 18px; }
+        .refresh-text { font-size: 12px; color: #999; text-align: right; margin-bottom: 15px; min-height: 18px; }
         .loading-bar { height: 4px; width: 100%; background: #eee; overflow: hidden; margin-bottom: 20px; border-radius: 10px; display: none; }
         .loading-progress { height: 100%; background: var(--primary); width: 40%; animation: load 1.5s infinite linear; }
         @keyframes load { from { margin-left: -40%; } to { margin-left: 100%; } }
 
-        /* Category Grid */
         .section-title { font-size: 15px; color: var(--text-sub); margin: 20px 0 10px 5px; font-weight: 600; }
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
@@ -85,12 +77,9 @@
             border: 1px solid #e2e8f0; 
             text-align: center; 
             cursor: pointer;
-            transition: 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .cat-chip:active { background: #f0f5ff; transform: translateY(2px); }
-        .cat-chip b { display: block; font-size: 16px; color: #2d3748; }
         .cat-count { 
             background: var(--primary); 
             color: white; 
@@ -101,7 +90,6 @@
             margin-top: 8px; 
         }
 
-        /* Result Items */
         .search-result-item { 
             background: white; 
             padding: 12px; 
@@ -111,14 +99,9 @@
             display: flex; 
             align-items: center; 
             gap: 15px;
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
         .search-result-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #f8f9fa; }
-        .item-info b { color: #2d3748; display: block; font-size: 16px; margin-bottom: 4px; }
-        .item-info small { color: var(--text-sub); font-size: 13px; display: block; }
         .qty-badge { margin-left: auto; background: #f1f5f9; padding: 5px 12px; border-radius: 10px; font-weight: 600; color: var(--primary); }
     </style>
 </head>
@@ -133,28 +116,27 @@
     <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="กำลังโหลดข้อมูล..." disabled>
     
     <div id="loader" class="loading-bar"><div class="loading-progress"></div></div>
-    <div id="statusText" class="refresh-text">⏳ กำลังเตรียมฐานข้อมูล...</div>
+    <div id="statusText" class="refresh-text">⏳ กำลังเชื่อมต่อ Google Sheet...</div>
 
-    <div id="displayArea">
-        </div>
+    <div id="displayArea"></div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx4pf19QBHE8ekdpGL0yQGpJOCnM3WUEO7IDoMQhTKmHKXxsqeh7QGKRHdTfEdqvFu29Q/exec'; 
-    const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
+    // *** สำคัญ: เปลี่ยน URL ด้านล่างนี้เป็น Web App URL ของคุณที่ได้จากการ Deploy ***
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwibmG-77o_zQg4v9o0kX-j8G3B4stBpJdVcSpMoLs-aJIXjo9Zdhyev4Kb8W7M6L0D/exec'; 
     
+    const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
     let stockData = [];
 
-    // เริ่มทำงานทันทีที่เปิดหน้า
     function init() {
         const cached = localStorage.getItem('stock_cache');
         if (cached) {
             stockData = JSON.parse(cached);
             document.getElementById('searchInput').disabled = false;
-            document.getElementById('searchInput').placeholder = "ค้นหาชื่ออะไหล่ หรือหมวดหมู่...";
-            render(); // แสดงผลจาก Cache ทันที
+            document.getElementById('searchInput').placeholder = "ค้นหาได้เลย...";
+            render();
         }
-        fetchData(); // ดึงข้อมูลสดจาก Server
+        fetchData();
     }
 
     async function fetchData() {
@@ -163,18 +145,21 @@
         loader.style.display = 'block';
 
         try {
-            const response = await fetch(`${scriptURL}?t=${Date.now()}`);
+            // เพิ่มการดึงข้อมูลและจัดการ CORS เบื้องต้น
+            const response = await fetch(scriptURL);
             const data = await response.json();
 
             if (data && data.length > 0) {
                 stockData = data;
                 localStorage.setItem('stock_cache', JSON.stringify(data));
                 render();
-                status.innerText = "✅ ข้อมูลอัปเดตล่าสุดแล้ว";
+                status.innerText = "✅ ข้อมูลอัปเดตปัจจุบันแล้ว";
+            } else {
+                status.innerText = "❌ ไม่พบข้อมูลใน Google Sheet";
             }
         } catch (e) {
             console.error("Fetch Error:", e);
-            status.innerText = "⚠️ โหมดออฟไลน์ (ใช้ข้อมูลล่าสุดในเครื่อง)";
+            status.innerText = "⚠️ ไม่สามารถเชื่อมต่อได้ (แสดงข้อมูลล่าสุด)";
         } finally {
             loader.style.display = 'none';
             document.getElementById('searchInput').disabled = false;
@@ -187,37 +172,32 @@
         displayArea.innerHTML = '';
 
         if (query === "") {
-            // โหมดแสดงหมวดหมู่ (หน้าแรก)
             displayArea.innerHTML = '<div class="section-title">เลือกหมวดหมู่</div>';
             const grid = document.createElement('div');
             grid.className = 'category-container';
 
             allCategories.forEach(cat => {
-                const count = stockData.filter(item => item.category === cat).length;
+                // กรองข้อมูลโดยเช็คว่า category มีอยู่จริงและตรงกับหมวดไหม
+                const count = stockData.filter(item => item.category && item.category.toString().toLowerCase() === cat.toLowerCase()).length;
                 const card = document.createElement('div');
                 card.className = 'cat-chip';
-                card.innerHTML = `
-                    <b>${cat}</b>
-                    <div class="cat-count">${count} รายการ</div>
-                `;
+                card.innerHTML = `<b>${cat}</b><div class="cat-count">${count} รายการ</div>`;
                 card.onclick = () => {
-                    document.getElementById('searchInput').value = cat;
-                    render();
-                };
+    window.location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
+};
                 grid.appendChild(card);
             });
             displayArea.appendChild(grid);
         } else {
-            // โหมดค้นหา
             const filtered = stockData.filter(item => 
-                (item.name && item.name.toLowerCase().includes(query)) || 
-                (item.category && item.category.toLowerCase().includes(query))
+                (item.name && item.name.toString().toLowerCase().includes(query)) || 
+                (item.category && item.category.toString().toLowerCase().includes(query))
             );
 
             displayArea.innerHTML = `<div class="section-title">พบ ${filtered.length} รายการ</div>`;
 
             if (filtered.length === 0) {
-                displayArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:20px;">ไม่พบข้อมูลที่ค้นหา</p>`;
+                displayArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:20px;">ไม่พบข้อมูล</p>`;
                 return;
             }
 
@@ -237,7 +217,6 @@
         }
     }
 
-    // รันฟังก์ชันเริ่มต้น
     init();
 </script>
 
