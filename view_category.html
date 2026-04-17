@@ -199,31 +199,40 @@
 
     async function saveEdit() {
     const btn = document.getElementById('saveBtn');
-    btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
+    btn.disabled = true; 
+    btn.innerText = "⏳ กำลังบันทึก...";
+
+    // ตรวจสอบว่า editImages มีข้อมูลรูปภาพใหม่จริงหรือไม่
+    console.log("New images to save:", editImages);
 
     const updatedItem = {
         action: "edit",
-        // ... (ข้อมูลอื่นๆ เหมือนเดิม)
-        imgs: JSON.stringify(editImages) 
+        id: document.getElementById('eId').value,      // ต้องส่ง ID ไปเพื่อระบุแถว
+        name: document.getElementById('eName').value,
+        qty: document.getElementById('eQty').value,
+        loc: document.getElementById('eLoc').value,
+        cat: cat, 
+        imgs: JSON.stringify(editImages)               // ส่ง Array รูปภาพใหม่ในรูปแบบ String
     };
 
     try {
-        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(updatedItem) });
+        await fetch(scriptURL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(updatedItem) 
+        });
         
-        // --- ส่วนที่ต้องเพิ่ม/แก้ไข ---
-        // 1. ล้าง Cache ทั้งหมดเพื่อให้หน้า Search โหลดข้อมูลใหม่จาก Server
+        // ล้าง Cache เพื่อให้หน้าอื่นดึงรูปใหม่ไปแสดง
         localStorage.removeItem('stock_cache'); 
         
-        alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
-        
-        // 2. กลับไปหน้า Search เพื่อบังคับให้โหลดข้อมูลใหม่ล่าสุด
+        alert('บันทึกรูปภาพและข้อมูลเรียบร้อย!');
         window.location.href = 'Search.html'; 
     } catch (e) {
         alert('เกิดข้อผิดพลาด');
-        btn.disabled = false; btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
+        btn.disabled = false; 
+        btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
     }
 }
-
     function updateSlider() {
         const imgTag = document.getElementById('mImg');
         imgTag.src = currentImages[currentIndex] || 'https://via.placeholder.com/400x300?text=No+Image';
