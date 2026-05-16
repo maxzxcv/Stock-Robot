@@ -4,7 +4,7 @@ const ASSETS = [
   'Search.html',
   'add_Item.html',
   'view_category.html',
-  'Logodrive.png'
+  'LOGO.jpg'
 ];
 
 self.addEventListener('install', (e) => {
