@@ -1,0 +1,21 @@
+{
+  "name": "Repair Stock Solution",
+  "short_name": "RepairStock",
+  "description": "ระบบจัดการอะไหล่ Robot Repair Center",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2575fc",
+  "icons": [
+    {
+      "src": "Logodrive.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Logodrive.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

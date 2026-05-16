@@ -95,7 +95,8 @@
     </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwsITreVIwm872Vi2oENaIUlbssdZGkcsgEerfH8j38M9JLPy4LBBWbLRhyKWvao12g/exec';
+    // *** เปลี่ยน URL ตรงนี้เป็น URL ใหม่ที่ได้จากการ New Deployment ***
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec';
     const cat = new URLSearchParams(window.location.search).get('cat');
     document.getElementById('catTitle').innerText = '📁 ' + cat;
 
@@ -103,7 +104,7 @@
     let editImages = []; 
     let stockData = JSON.parse(localStorage.getItem('stock_cache') || "[]");
 
-    // ฟังก์ชันย่อขนาดรูปภาพ
+    // ฟังก์ชันย่อขนาดรูปภาพ (สำคัญมากเพื่อความเสถียร)
     function resizeImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -113,10 +114,9 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; 
+                    const MAX_WIDTH = 600; // ลดขนาดลงเพื่อความเร็ว
                     let width = img.width;
                     let height = img.height;
-
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width;
                         width = MAX_WIDTH;
@@ -125,12 +125,61 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // ย่อคุณภาพเหลือ 70%
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // คุณภาพ 60% เพียงพอสำหรับดูอะไหล่
                 };
             };
         });
     }
 
+    // ฟังก์ชันบันทึกการแก้ไข
+    async function saveEdit() {
+        const btn = document.getElementById('saveBtn');
+        const oldText = btn.innerText;
+        btn.disabled = true; 
+        btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
+
+        const updatedItem = {
+            action: "edit",
+            id: document.getElementById('eId').value,    // รหัสสินค้า (ตัวอ้างอิง)
+            name: document.getElementById('eName').value,
+            qty: document.getElementById('eQty').value,
+            loc: document.getElementById('eLoc').value,
+            cat: cat,
+            img: JSON.stringify(editImages)             // ส่งรูปภาพ (JSON string)
+        };
+
+        try {
+            // ส่งข้อมูลไปยัง Google Sheets
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(updatedItem) 
+            });
+            
+            // ล้าง Cache และแจ้งเตือน
+            localStorage.removeItem('stock_cache'); 
+            alert('✅ บันทึกการเปลี่ยนแปลงเรียบร้อย!');
+            window.location.href = 'Search.html'; 
+        } catch (e) {
+            console.error(e);
+            alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ');
+            btn.disabled = false; 
+            btn.innerText = oldText;
+        }
+    }
+
+    // ฟังก์ชันเพิ่มรูปใหม่พร้อมย่อขนาด
+    async function addNewFiles() {
+        const files = document.getElementById('eFiles').files;
+        if (files.length === 0) return;
+        
+        for (let file of files) {
+            const resizedBase64 = await resizeImage(file);
+            editImages.push(resizedBase64);
+        }
+        showEditThumbs();
+        document.getElementById('eFiles').value = ''; 
+    }
     function renderList() {
         const list = document.getElementById('list');
         list.innerHTML = '';

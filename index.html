@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Welcome - Repair Stock Solution</title>
+    <title>Repair Stock</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2575fc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="Logodrive.png">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
 
         :root {
-            --primary-blue: #2575fc;
             --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); /* soft blue split */
-            --text-dark: #2d3748;
-            --text-gray: #718096;
-            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            --btn-shadow: 0 10px 15px -3px rgba(37, 117, 252, 0.3), 0 4px 6px -2px rgba(37, 117, 252, 0.1);
+            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
         }
 
         body {
@@ -26,129 +28,62 @@
             justify-content: center;
             align-items: center;
             background: var(--bg-gradient);
-            color: var(--text-dark);
             box-sizing: border-box;
-            overflow: hidden; /* Prevent scrollbar during animation */
-        }
-
-        /* Animation for Card Load */
-        @keyframes slideUpFade {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .card {
             background: white;
-            padding: 50px 40px;
+            padding: 40px 30px;
             border-radius: 30px;
             width: 100%;
             max-width: 380px;
             text-align: center;
-            box-shadow: var(--card-shadow);
-            position: relative;
-            animation: slideUpFade 0.6s ease-out forwards; /* Load animation */
-            border: 1px solid rgba(255, 255, 255, 0.6); /* glass effect border */
-        }
-
-        .logo-wrapper {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 25px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
         img {
-            width: 130px;
-            height: 130px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 6px solid white;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+            border: 5px solid #f0f7ff;
         }
 
-        /* Hover effect on Logo */
-        .card:hover img {
-            transform: scale(1.05) rotate(3deg);
-        }
-
-        h2 {
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--text-dark);
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            color: var(--text-gray);
-            font-weight: 300;
-            margin: 0 0 40px 0;
-            font-size: 16px;
-            line-height: 1.5;
-        }
+        h2 { margin: 0; font-size: 26px; color: #2d3748; }
+        .subtitle { color: #718096; margin-bottom: 35px; font-size: 15px; }
 
         .btn {
             display: block;
-            padding: 18px;
-            background: var(--primary-blue);
+            padding: 16px;
             background: var(--primary-gradient);
             color: white;
             text-decoration: none;
-            border-radius: 18px;
+            border-radius: 15px;
             font-weight: 600;
             font-size: 18px;
-            box-shadow: var(--btn-shadow);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(37, 117, 252, 0.2);
+            transition: 0.3s;
         }
 
-        /* Hover animation for Button */
-        @media (hover: hover) {
-            .btn:hover {
-                transform: translateY(-3px) scale(1.02);
-                box-shadow: 0 20px 25px -5px rgba(37, 117, 252, 0.4), 0 10px 10px -5px rgba(37, 117, 252, 0.2);
-            }
-        }
-
-        /* Active/Click animation for Button */
-        .btn:active {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 0 5px 10px -3px rgba(37, 117, 252, 0.3);
-            transition: all 0.1s ease;
-        }
-        
-        /* Optional: footer or company name */
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 12px;
-            color: var(--text-gray);
-            opacity: 0.7;
-        }
-
+        .btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div class="logo-wrapper">
-            <img src="Logo.jpg" onerror="this.src='https://via.placeholder.com/130x130/2575fc/ffffff?text=STOCK'">
-        </div>
-        
+        <img src="Logodrive.png" onerror="this.src='https://via.placeholder.com/120?text=Repair'">
         <h2>Repair Stock</h2>
-        <p class="subtitle">ระบบจัดการอะไหล่และอุปกรณ์<br>Robot Repair Center</p>
-        
+        <p class="subtitle">ระบบจัดการอะไหล่และอุปกรณ์</p>
         <a href="Search.html" class="btn">เข้าสู่ระบบจัดการสต็อก</a>
     </div>
 
-    <div class="footer">© 2024 Robot Repair Center</div>
-
+    <script>
+        // ลงทะเบียน Service Worker เพื่อให้ติดตั้งแอปได้
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
 </body>
 </html>
