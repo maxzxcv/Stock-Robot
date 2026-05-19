@@ -18,89 +18,60 @@
         
         input, select, textarea { 
             width: 100%; 
-            padding: 12px; 
-            border: 1.5px solid #edf2f7; 
-            border-radius: 12px; 
+            padding: 12px 14px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 14px; 
+            font-size: 15px; 
+            font-family: 'Prompt';
             box-sizing: border-box; 
-            font-family: 'Prompt'; 
-            font-size: 15px;
-            transition: 0.3s;
             background: #f8fafc;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { 
+            border-color: #2575fc; 
+            background: white; 
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1); 
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #2575fc;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1);
-        }
+        .img-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .img-preview-container img { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #edf2f7; }
 
         .btn-submit { 
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%); 
             color: white; 
             border: none; 
-            width: 100%; 
-            padding: 16px; 
-            border-radius: 15px; 
-            font-weight: bold; 
-            font-size: 16px;
+            border-radius: 14px; 
+            font-size: 16px; 
+            font-weight: 600; 
             cursor: pointer; 
-            box-shadow: 0 10px 15px -3px rgba(37, 117, 252, 0.3);
+            box-shadow: 0 6px 20px rgba(37,117,252,0.25);
             margin-top: 10px;
         }
-
-        .btn-submit:disabled { background: #cbd5e0; cursor: not-allowed; }
-
-        #thumb-container { 
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            margin-top: 10px; 
-            padding: 5px;
-        }
-        #thumb-container img { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 12px; 
-            object-fit: cover; 
-            border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .btn-submit:disabled { background: #cbd5e0; cursor: not-allowed; box-shadow: none; }
         
-        .file-input-wrapper {
-            position: relative;
-            background: #f1f5f9;
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-        }
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #718096; text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-flex">
-        <h2>🚀 เพิ่มรายการซ่อมใหม่</h2>
+        <h2>📝 เพิ่มรายการอะไหล่ / บันทึกการซ่อม</h2>
     </div>
 
     <form id="addForm">
-        <div class="form-group">
-            <label>📸 อัปโหลดรูปภาพ (หลายรูปได้)</label>
-            <input type="file" id="files" accept="image/*" multiple onchange="handleFiles()">
-            <div id="thumb-container"></div>
-        </div>
-
         <div class="form-group">
             <label>📅 วันที่รับเข้า</label>
             <input type="date" id="date" required>
         </div>
 
         <div class="form-group">
-            <label>📁 หมวดหมู่สินค้า</label>
+            <label>📁 หมวดหมู่สินค้า / อุปกรณ์</label>
             <select id="cat" required>
-                <option value="" disabled selected>เลือกหมวดหมู่...</option>
+                <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
                 <option value="drive 08">drive 08</option>
                 <option value="drive 16">drive 16</option>
                 <option value="drive 32">drive 32</option>
@@ -118,38 +89,64 @@
         </div>
 
         <div class="form-group">
-            <label>🆔 รหัสสินค้า / Serial Number</label>
-            <input type="text" id="id" placeholder="ระบุ ID สินค้า" required>
+            <label>🆔 รหัสสินค้า / บาร์โค้ด</label>
+            <input type="text" id="id" placeholder="สแกนหรือพิมพ์รหัสสินค้า" required>
         </div>
 
         <div class="form-group">
-            <label>🛠️ อาการเสีย / ปัญหาที่พบ</label>
-            <textarea id="name" rows="3" placeholder="ระบุอาการเสียอย่างละเอียด" required></textarea>
+            <label>🛠️ อาการที่พบ / ชื่ออะไหล่</label>
+            <textarea id="name" rows="3" placeholder="ระบุชื่อหรือรายละเอียดอาการเสีย" required></textarea>
         </div>
 
         <div class="form-group">
-            <label>📍 สถานที่จัดเก็บ (ตู้/ชั้น)</label>
-            <input type="text" id="loc" placeholder="ระบุตำแหน่งที่เก็บ" required>
+            <label>📍 ที่เก็บ / ชั้นวางสินค้า</label>
+            <input type="text" id="loc" placeholder="เช่น ชั้น A1, โซน B" required>
         </div>
 
-        <button type="submit" class="btn-submit" id="btn">💾 บันทึกข้อมูลซ่อม</button>
-        <button type="button" style="background:none; border:none; color:#718096; width:100%; margin-top:15px; cursor:pointer;" onclick="window.location.href='Search.html'">ยกเลิก</button>
+        <div class="form-group">
+            <label>📸 อัปโหลดรูปภาพ</label>
+            <input type="file" id="files" accept="image/*" multiple onchange="previewImages()">
+            <div class="img-preview-container" id="previewBox"></div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn">💾 บันทึกข้อมูลลงชีท</button>
+        <a href="Search.html" class="btn-back">⬅️ ย้อนกลับหน้าค้นหา</a>
     </form>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec'; 
-    document.getElementById('date').valueAsDate = new Date();
-    
+    const firebaseConfig = {
+        apiKey: "AIzaSyCutSz_ARwozGu27NMPk0QZQixW2lGPisw",
+        authDomain: "npstock-2d123.firebaseapp.com",
+        projectId: "npstock-2d123",
+        storageBucket: "npstock-2d123.firebasestorage.app",
+        messagingSenderId: "247952845171",
+        appId: "1:247952845171:web:20a33a3e66a16985d1bd06",
+        measurementId: "G-13W5LN2TNQ"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // ตรวจสอบสถานะการ Login
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+    });
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec';
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
     let images = [];
 
-    function handleFiles() {
-        const fileInput = document.getElementById('files');
-        const files = fileInput.files;
-        const container = document.getElementById('thumb-container');
-        container.innerHTML = ''; 
+    function previewImages() {
+        const container = document.getElementById('previewBox');
+        container.innerHTML = '';
         images = [];
-
+        
+        const files = document.getElementById('files').files;
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -172,8 +169,8 @@
             date: document.getElementById('date').value,
             cat: document.getElementById('cat').value,
             id: document.getElementById('id').value,
-            name: document.getElementById('name').value, // ตอนนี้คืออาการ
-            qty: "-", // ส่งค่าว่างหรือขีดไปแทนเนื่องจากเอาช่องจำนวนออก
+            name: document.getElementById('name').value, 
+            qty: "-", 
             loc: document.getElementById('loc').value,
             imgs: JSON.stringify(images)
         };
@@ -184,12 +181,13 @@
                 mode: 'no-cors', 
                 body: JSON.stringify(payload) 
             });
-            alert('✅ บันทึกรายการซ่อมสำเร็จ!'); 
+            localStorage.removeItem('stock_cache');
+            alert('✅ บันทึกรายการสำเร็จ!'); 
             window.location.href = 'Search.html';
         } catch (err) { 
             alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่'); 
-            btn.disabled = false; 
-            btn.innerText = "💾 บันทึกข้อมูลซ่อม";
+            btn.disabled = false;
+            btn.innerText = "💾 บันทึกข้อมูลลงชีท";
         }
     };
 </script>

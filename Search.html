@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>คลังสินค้า - ระบบจัดการอะไหล่</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght=300;400;600&display=swap');
         
         :root {
             --primary: #2575fc;
@@ -32,193 +32,372 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
         }
 
-        .header-flex { 
+        .top-bar { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             margin-bottom: 20px; 
         }
         
-        .btn-nav { 
-            background: var(--success); 
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 20px; 
-            border-radius: 12px; 
+        .top-bar h2 { 
+            margin: 0; 
+            font-size: 20px; 
             font-weight: 600; 
-            font-size: 14px;
-            transition: 0.2s;
+            color: #1a202c; 
         }
 
         .search-box { 
-            width: 100%; 
-            padding: 15px; 
-            border-radius: 15px; 
-            border: 2px solid #edf2f7; 
-            margin-bottom: 10px; 
-            box-sizing: border-box; 
-            font-family: 'Prompt'; 
-            font-size: 16px; 
-            outline: none;
+            position: relative; 
+            margin-bottom: 20px; 
         }
-
-        .refresh-text { font-size: 12px; color: #999; text-align: right; margin-bottom: 15px; min-height: 18px; }
-        .loading-bar { height: 4px; width: 100%; background: #eee; overflow: hidden; margin-bottom: 20px; border-radius: 10px; display: none; }
-        .loading-progress { height: 100%; background: var(--primary); width: 40%; animation: load 1.5s infinite linear; }
-        @keyframes load { from { margin-left: -40%; } to { margin-left: 100%; } }
-
-        .section-title { font-size: 15px; color: var(--text-sub); margin: 20px 0 10px 5px; font-weight: 600; }
-        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        .cat-chip { 
-            background: #ffffff; 
-            padding: 16px 10px; 
-            border-radius: 18px; 
-            border: 1px solid #e2e8f0; 
-            text-align: center; 
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        .search-box input { 
+            width: 100%; 
+            padding: 14px 14px 14px 45px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 16px; 
+            font-size: 15px; 
+            font-family: 'Prompt';
+            box-sizing: border-box; 
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        
+        .search-box input:focus { 
+            border-color: var(--primary); 
+            background: white; 
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1); 
+        }
+        
+        .search-box::before { 
+            content: '🔍'; 
+            position: absolute; 
+            left: 16px; 
+            top: 14px; 
+            font-size: 16px; 
+            color: #a0aec0; 
         }
 
-        .cat-count { 
-            background: var(--primary); 
+        .btn-add { 
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%); 
             color: white; 
-            padding: 2px 12px; 
-            border-radius: 20px; 
-            font-size: 11px; 
-            display: inline-block; 
-            margin-top: 8px; 
+            text-decoration: none; 
+            padding: 10px 18px; 
+            border-radius: 14px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            box-shadow: 0 4px 12px rgba(37,117,252,0.2); 
+        }
+
+        /* ตกแต่งส่วนหัวกลุ่มย่อย */
+        .group-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            background: #edf2f7;
+            padding: 6px 12px;
+            border-radius: 10px;
+            margin: 20px 0 10px 0;
+        }
+
+        .grid-cats { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+        }
+        
+        .cat-card { 
+            background: #f8fafc; 
+            border: 1px solid #edf2f7; 
+            padding: 16px; 
+            border-radius: 18px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+        }
+        
+        .cat-card:hover { 
+            transform: translateY(-2px); 
+            border-color: var(--primary); 
+            background: white; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04); 
+        }
+        
+        .cat-name { 
+            font-weight: 600; 
+            font-size: 15px; 
+            color: #2d3748; 
+        }
+        
+        .cat-count { 
+            font-size: 12px; 
+            color: var(--text-sub); 
         }
 
         .search-result-item { 
-            background: white; 
-            padding: 12px; 
-            border-radius: 16px; 
-            border: 1px solid #edf2f7; 
-            margin-bottom: 10px; 
             display: flex; 
             align-items: center; 
-            gap: 15px;
+            gap: 15px; 
+            padding: 14px; 
+            border-bottom: 1px solid #edf2f7; 
+            cursor: pointer; 
+        }
+        
+        .search-result-item img { 
+            width: 55px; 
+            height: 55px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            background: #eee; 
+        }
+        
+        .item-info { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 3px; 
+        }
+        
+        .item-info b { 
+            font-size: 15px; 
+            color: #2d3748; 
+        }
+        
+        .item-info small { 
+            color: var(--text-sub); 
+            font-size: 12px; 
+        }
+        
+        .qty-badge { 
+            background: #edf2f7; 
+            padding: 4px 10px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            font-size: 13px; 
+            color: #4a5568; 
         }
 
-        .search-result-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #f8f9fa; }
-        .qty-badge { margin-left: auto; background: #f1f5f9; padding: 5px 12px; border-radius: 10px; font-weight: 600; color: var(--primary); }
+        .section-title { 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: var(--text-sub); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            margin: 15px 0 10px 5px; 
+        }
+
+        .btn-logout-top {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            font-family: 'Prompt';
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-flex">
-        <h2 style="margin:0; color:var(--primary);">📦 คลังอะไหล่</h2>
-        <a href="add_Item.html" class="btn-nav">+ เพิ่มของ</a>
+    <div class="top-bar">
+        <h2>📦 คลังสต็อกแอป</h2>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button onclick="logout()" class="btn-logout-top">🚪 ออกระบบ</button>
+            <a href="add_Item.html" class="btn-add">+ เพิ่มรายการ</a>
+        </div>
     </div>
 
-    <input type="text" id="searchInput" class="search-box" oninput="render()" placeholder="กำลังโหลดข้อมูล..." disabled>
-    
-    <div id="loader" class="loading-bar"><div class="loading-progress"></div></div>
-    <div id="statusText" class="refresh-text">⏳ กำลังเชื่อมต่อ Google Sheet...</div>
+    <div class="search-box">
+        <input type="text" id="search" placeholder="พิมพ์เพื่อค้นหาอะไหล่ หรือ หมวดหมู่..." oninput="doSearch()">
+    </div>
 
-    <div id="displayArea"></div>
+    <div id="displayArea">
+        <div class="loading" style="text-align: center; color: #999; padding: 20px;">⏳ กำลังโหลดคลังข้อมูล...</div>
+    </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
 <script>
-    // *** สำคัญ: เปลี่ยน URL ด้านล่างนี้เป็น Web App URL ของคุณที่ได้จากการ Deploy ***
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec'; 
-    
-    const allCategories = ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64", "KPS", "MFC", "DSE", "Safety95", "SafetyXP", "Com95", "ComXP", "การ์ดจอ"];
+    const firebaseConfig = {
+        apiKey: "AIzaSyCutSz_ARwozGu27NMPk0QZQixW2lGPisw",
+        authDomain: "npstock-2d123.firebaseapp.com",
+        projectId: "npstock-2d123",
+        storageBucket: "npstock-2d123.firebasestorage.app",
+        messagingSenderId: "247952845171",
+        appId: "1:247952845171:web:20a33a3e66a16985d1bd06",
+        measurementId: "G-13W5LN2TNQ"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // ตรวจสอบสถานะการ Login
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+    });
+
+    function logout() {
+        if(confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
+            firebase.auth().signOut().then(() => {
+                localStorage.removeItem('stock_cache');
+                window.location.href = 'login.html';
+            });
+        }
+    }
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec';
     let stockData = [];
 
-    function init() {
-        const cached = localStorage.getItem('stock_cache');
-        if (cached) {
-            stockData = JSON.parse(cached);
-            document.getElementById('searchInput').disabled = false;
-            document.getElementById('searchInput').placeholder = "ค้นหาได้เลย...";
-            render();
+    async function loadData() {
+        const cache = localStorage.getItem('stock_cache');
+        if (cache) {
+            stockData = JSON.parse(cache);
+            renderCategories();
+            return;
         }
-        fetchData();
-    }
-
-    async function fetchData() {
-        const loader = document.getElementById('loader');
-        const status = document.getElementById('statusText');
-        loader.style.display = 'block';
 
         try {
-            // เพิ่มการดึงข้อมูลและจัดการ CORS เบื้องต้น
-            const response = await fetch(scriptURL);
-            const data = await response.json();
-
-            if (data && data.length > 0) {
-                stockData = data;
-                localStorage.setItem('stock_cache', JSON.stringify(data));
-                render();
-                status.innerText = "✅ ข้อมูลอัปเดตปัจจุบันแล้ว";
-            } else {
-                status.innerText = "❌ ไม่พบข้อมูลใน Google Sheet";
-            }
-        } catch (e) {
-            console.error("Fetch Error:", e);
-            status.innerText = "⚠️ ไม่สามารถเชื่อมต่อได้ (แสดงข้อมูลล่าสุด)";
-        } finally {
-            loader.style.display = 'none';
-            document.getElementById('searchInput').disabled = false;
+            const res = await fetch(scriptURL);
+            stockData = await res.json();
+            localStorage.setItem('stock_cache', JSON.stringify(stockData));
+            renderCategories();
+        } catch (err) {
+            document.getElementById('displayArea').innerHTML = '<p style="text-align:center; color:red;">❌ โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช</p>';
         }
     }
 
-    function render() {
-        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    function renderCategories() {
         const displayArea = document.getElementById('displayArea');
-        displayArea.innerHTML = '';
+        displayArea.innerHTML = '<div class="section-title">หมวดหมู่ทั้งหมด</div>';
 
-        if (query === "") {
-            displayArea.innerHTML = '<div class="section-title">เลือกหมวดหมู่</div>';
+        // นับจำนวนรายการในแต่ละหมวดหมู่
+        const cats = {};
+        stockData.forEach(item => {
+            if(item.cat) cats[item.cat] = (cats[item.cat] || 0) + 1;
+        });
+
+        // นิยามการจัดกลุ่มหลัก (Main Groups) สอดคล้องกับหน้าเพิ่มข้อมูล
+        const mainGroups = [
+            { name: "📦 [DRIVE]", items: ["drive 08", "drive 16", "drive 32", "drive 48", "drive 64"] },
+            { name: "📦 [BOARD]", items: ["KPS", "MFC", "DSE", "การ์ดจอ"] },
+            { name: "📦 [SAFETY & OS]", items: ["Safety95", "SafetyXP", "Com95", "ComXP"] }
+        ];
+
+        // เก็บรายชื่อหมวดหมู่ที่ถูกจัดกลุ่มไปแล้ว
+        const categorizedItems = new Set();
+        mainGroups.forEach(g => g.items.forEach(i => categorizedItems.add(i)));
+
+        // วนลูปสร้างกลุ่มที่ระบุไว้
+        mainGroups.forEach(group => {
+            // กรองเอาเฉพาะหมวดหมู่ย่อยที่มีอยู่ในข้อมูลจริง (หรือจะแสดง 0 รายการถ้าต้องการให้เห็นปุ่มว่างก็ได้)
+            const activeSubCats = group.items.filter(subCat => cats[subCat] !== undefined || subCat); 
+            
+            if (activeSubCats.length > 0) {
+                const header = document.createElement('div');
+                header.className = 'group-header';
+                header.innerText = group.name;
+                displayArea.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'grid-cats';
+
+                activeSubCats.forEach(subCat => {
+                    const count = cats[subCat] || 0;
+                    const card = document.createElement('div');
+                    card.className = 'cat-card';
+                    card.innerHTML = `
+                        <div class="cat-name">${subCat}</div>
+                        <div class="cat-count">${count} รายการ</div>
+                    `;
+                    card.onclick = () => {
+                        window.location.href = `view_category.html?cat=${encodeURIComponent(subCat)}`;
+                    };
+                    grid.appendChild(card);
+                });
+                displayArea.appendChild(grid);
+            }
+        });
+
+        // สำหรับหมวดหมู่อื่นๆ ที่ไม่ได้ถูกระบุจัดกลุ่มด้านบน (Fallback Group)
+        const otherCats = Object.keys(cats).filter(cat => !categorizedItems.has(cat));
+        if (otherCats.length > 0) {
+            const header = document.createElement('div');
+            header.className = 'group-header';
+            header.innerText = "📦 [OTHER / หมวดหมู่อื่นๆ]";
+            displayArea.appendChild(header);
+
             const grid = document.createElement('div');
-            grid.className = 'category-container';
+            grid.className = 'grid-cats';
 
-            allCategories.forEach(cat => {
-                // กรองข้อมูลโดยเช็คว่า category มีอยู่จริงและตรงกับหมวดไหม
-                const count = stockData.filter(item => item.category && item.category.toString().toLowerCase() === cat.toLowerCase()).length;
+            otherCats.forEach(cat => {
                 const card = document.createElement('div');
-                card.className = 'cat-chip';
-                card.innerHTML = `<b>${cat}</b><div class="cat-count">${count} รายการ</div>`;
+                card.className = 'cat-card';
+                card.innerHTML = `
+                    <div class="cat-name">${cat}</div>
+                    <div class="cat-count">${cats[cat]} รายการ</div>
+                `;
                 card.onclick = () => {
-    window.location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
-};
+                    window.location.href = `view_category.html?cat=${encodeURIComponent(cat)}`;
+                };
                 grid.appendChild(card);
             });
             displayArea.appendChild(grid);
-        } else {
-            const filtered = stockData.filter(item => 
-                (item.name && item.name.toString().toLowerCase().includes(query)) || 
-                (item.category && item.category.toString().toLowerCase().includes(query))
-            );
-
-            displayArea.innerHTML = `<div class="section-title">พบ ${filtered.length} รายการ</div>`;
-
-            if (filtered.length === 0) {
-                displayArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:20px;">ไม่พบข้อมูล</p>`;
-                return;
-            }
-
-            filtered.forEach(item => {
-                const row = document.createElement('div');
-                row.className = 'search-result-item';
-                row.innerHTML = `
-                    <img src="${item.image || 'https://via.placeholder.com/60?text=No+Img'}" onerror="this.src='https://via.placeholder.com/60?text=Error'">
-                    <div class="item-info">
-                        <b>${item.name || 'ไม่มีชื่อ'}</b>
-                        <small>หมวด: ${item.category || '-'}</small>
-                    </div>
-                    <div class="qty-badge">${item.qty || 0}</div>
-                `;
-                displayArea.appendChild(row);
-            });
         }
     }
 
-    init();
-</script>
+    function doSearch() {
+        const query = document.getElementById('search').value.trim().toLowerCase();
+        const displayArea = document.getElementById('displayArea');
 
+        if (!query) {
+            renderCategories();
+            return;
+        }
+
+        const filtered = stockData.filter(item => 
+            (item.name && item.name.toString().toLowerCase().includes(query)) || 
+            (item.cat && item.cat.toString().toLowerCase().includes(query)) ||
+            (item.id && item.id.toString().toLowerCase().includes(query))
+        );
+
+        displayArea.innerHTML = `<div class="section-title">พบ ${filtered.length} รายการ</div>`;
+
+        if (filtered.length === 0) {
+            displayArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:20px;">ไม่พบข้อมูล</p>`;
+            return;
+        }
+
+        filtered.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'search-result-item';
+            
+            // ปรับแก้คีย์จาก item.img เป็น item.imgs เพื่อความสมบูรณ์ในการดึงภาพพรีวิว
+            let imgs = [];
+            try { imgs = JSON.parse(item.imgs || "[]"); } catch(e){}
+            const firstImg = imgs.length > 0 ? imgs[0] : 'https://via.placeholder.com/60?text=No+Img';
+
+            row.innerHTML = `
+                <img src="${firstImg}" onerror="this.src='https://via.placeholder.com/60?text=Error'">
+                <div class="item-info">
+                    <b>${item.name || 'ไม่มีชื่อ'}</b>
+                    <small>หมวด: ${item.cat || '-'} | รหัส: ${item.id || '-'}</small>
+                </div>
+                <div class="qty-badge">${item.qty || 0}</div>
+            `;
+            row.onclick = () => {
+                window.location.href = `view_category.html?cat=${encodeURIComponent(item.cat)}`;
+            };
+            displayArea.appendChild(row);
+        });
+    }
+
+    loadData();
+</script>
 </body>
 </html>

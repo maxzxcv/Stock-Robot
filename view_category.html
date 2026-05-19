@@ -10,92 +10,116 @@
         .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .btn-back { text-decoration: none; color: #2575fc; font-weight: 600; display: flex; align-items: center; gap: 5px; }
 
-        .item-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; border-left: 6px solid #2575fc; cursor: pointer; }
-        .item-info b { font-size: 1.1rem; color: #1a202c; }
-        .item-info small { color: #718096; display: block; margin-top: 3px; }
-        .thumb-preview { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb-preview img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: #eee; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; padding: 15px; box-sizing: border-box; }
-        .modal-content { background: white; border-radius: 25px; width: 100%; max-width: 450px; overflow-y: auto; max-height: 90vh; position: relative; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .item-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; border-left: 6px solid #2575fc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .item-info b { font-size: 1.1rem; color: #1a202c; display: block; margin-bottom: 4px; }
+        .item-info small { color: #718096; font-size: 0.85rem; }
+        .thumb-preview { display: flex; gap: 5px; }
+        .thumb-preview img { width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid #edf2f7; }
 
-        .slider-container { position: relative; background: #000; height: 250px; display: flex; align-items: center; justify-content: center; }
-        .slider-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
+        /* Modal Layer */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:999; padding: 10px; box-sizing: border-box; }
+        .modal-content { background:white; padding:25px; border-radius:24px; width:100%; max-width:450px; position:relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         
-        .detail-body { padding: 20px; }
-        .edit-mode { display: none; } 
+        .slider { position: relative; width:100%; height:220px; background:#000; border-radius:16px; overflow:hidden; margin-bottom: 15px; }
+        .slider img { width:100%; height:100%; object-fit: contain; }
+        .slider-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.8); border:none; width:36px; height:36px; border-radius:50%; font-size:16px; cursor:pointer; font-weight:bold; }
         
-        input, select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Prompt'; box-sizing: border-box; }
-        label { font-size: 14px; font-weight: 600; color: #666; }
+        .form-edit-group { margin-bottom: 12px; }
+        .form-edit-group label { display:block; font-size:13px; font-weight:600; color:#4a5568; margin-bottom:4px; }
+        .form-edit-group input { width:100%; padding:10px; border:1.5px solid #e2e8f0; border-radius:10px; font-family:'Prompt'; box-sizing: border-box; }
 
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-save { background: #28a745; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .btn-edit-trigger { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .btn-delete { background: #fff5f5; color: #e53e3e; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
-        .btn-close { grid-column: span 2; padding: 12px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 10px; cursor: pointer; }
-        
-        #edit-thumb-container { display: flex; gap: 10px; overflow-x: auto; margin-top: 5px; margin-bottom: 15px; padding: 5px; }
-        .thumb-wrapper { position: relative; flex-shrink: 0; }
-        .thumb-wrapper img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 2px solid #eee; }
-        .del-img-btn { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        .upload-placeholder { width: 80px; height: 80px; border: 2px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #999; cursor: pointer; flex-shrink: 0; }
+        .btn-orange { background:#f6ad55; color:white; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer; width:48%; font-family:'Prompt'; }
+        .btn-red { background:#fed7d7; color:#c53030; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer; width:48%; font-family:'Prompt'; }
+        .btn-gray { background:#edf2f7; color:#4a5568; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer; width:100%; margin-top:10px; font-family:'Prompt'; }
+
+        .edit-thumb-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+        .thumb-wrapper { position: relative; width: 60px; height: 60px; }
+        .thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        .del-img-btn { position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; cursor: pointer; }
+        .upload-placeholder { width: 60px; height: 60px; border: 2px dashed #cbd5e0; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; background: #f7fafc; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="Search.html" class="btn-back"><span>←</span> กลับ</a>
-        <h2 id="catTitle">📁 หมวดหมู่</h2>
-    </div>
+<div class="header">
+    <a href="Search.html" class="btn-back">⬅️ กลับ</a>
+    <h3 id="catTitle" style="margin:0; font-size:1.3rem;">📁 รายการสินค้า</h3>
+    <div style="width:40px;"></div>
+</div>
 
-    <div id="list"></div>
+<div id="list"></div>
 
-    <div id="modal" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="slider-container">
-                <button class="nav-btn" style="left:10px" onclick="changeImg(-1)">❮</button>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div id="viewMode">
+            <div class="slider">
+                <button class="slider-btn" style="left:10px;" onclick="changeImg(-1)">❮</button>
                 <img id="mImg" src="">
-                <button class="nav-btn" style="right:10px" onclick="changeImg(1)">❯</button>
+                <button class="slider-btn" style="right:10px;" onclick="changeImg(1)">❯</button>
             </div>
-            
-            <div class="detail-body">
-                <div id="viewMode">
-                    <h3 id="vName" style="margin:0 0 10px 0;"></h3>
-                    <p>🆔 รหัส: <b id="vId"></b></p>
-                    <p>🔢 คงเหลือ: <b id="vQty" style="color:#2575fc;"></b></p>
-                    <p>📍 ที่เก็บ: <b id="vLoc"></b></p>
-                    <div class="btn-group">
-                        <button class="btn-edit-trigger" onclick="toggleEdit(true)">✏️ แก้ไขข้อมูล</button>
-                        <button class="btn-delete" id="delBtn">🗑️ ลบ</button>
-                        <button class="btn-close" onclick="closeModal()">ปิด</button>
-                    </div>
-                </div>
-
-                <div id="editMode" class="edit-mode">
-                    <h3 style="margin-top:0;">✏️ แก้ไขรายละเอียด</h3>
-                    
-                    <label>📸 จัดการรูปภาพ (ย่อขนาดอัตโนมัติ)</label>
-                    <div id="edit-thumb-container"></div>
-                    <input type="file" id="eFiles" accept="image/*" multiple style="display:none" onchange="addNewFiles()">
-                    
-                    <label>ชื่อสินค้า</label><input type="text" id="eName">
-                    <label>รหัสสินค้า (ID) - แก้ไขไม่ได้</label><input type="text" id="eId" readonly style="background:#f0f0f0;">
-                    <label>จำนวน</label><input type="number" id="eQty">
-                    <label>ที่เก็บ</label><input type="text" id="eLoc">
-                    <div class="btn-group">
-                        <button class="btn-save" id="saveBtn" onclick="saveEdit()">💾 บันทึกการเปลี่ยนแปลง</button>
-                        <button class="btn-close" style="grid-column: span 1;" onclick="toggleEdit(false)">ยกเลิก</button>
-                    </div>
-                </div>
+            <h2 id="vName" style="margin:0 0 15px 0; font-size:1.4rem;"></h2>
+            <p>🆔 <b>รหัส:</b> <span id="vId"></span></p>\n            <p>🔢 <b>คงเหลือ:</b> <span id="vQty"></span></p>
+            <p>📍 <b>ที่เก็บ:</b> <span id="vLoc"></span></p>
+            <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                <button class="btn-orange" onclick="toggleEdit(true)">✏️ แก้ไขข้อมูล</button>
+                <button class="btn-red" id="delBtn">🗑️ ลบรายการ</button>
             </div>
         </div>
+
+        <div id="editMode" style="display:none;">
+            <h3>✏️ แก้ไขข้อมูลอะไหล่</h3>
+            <div class="form-edit-group">
+                <label>ชื่อสินค้า / อาการ</label>
+                <input type="text" id="eName">
+            </div>
+            <div class="form-edit-group">
+                <label>รหัสสินค้า (ID เปลี่ยนแปลงไม่ได้)</label>
+                <input type="text" id="eId" readonly style="background:#edf2f7;">
+            </div>
+            <div class="form-edit-group">
+                <label>จำนวนคงเหลือ</label>
+                <input type="text" id="eQty">
+            </div>
+            <div class="form-edit-group">
+                <label>สถานที่เก็บ</label>
+                <input type="text" id="eLoc">
+            </div>
+            <div class="form-edit-group">
+                <label>จัดการรูปภาพ</label>
+                <input type="file" id="eFiles" accept="image/*" multiple onchange="addNewFiles()" style="display:none;">
+                <div class="edit-thumb-container" id="edit-thumb-container"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                <button class="btn-orange" id="saveBtn" onclick="saveEdit()" style="background:#28a745; width:100%;">💾 บันทึกการเปลี่ยนแปลง</button>
+            </div>
+        </div>
+
+        <button class="btn-gray" onclick="closeModal()">ปิดหน้าต่าง</button>
     </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-    // *** เปลี่ยน URL ตรงนี้เป็น URL ใหม่ที่ได้จากการ New Deployment ***
+    const firebaseConfig = {
+        apiKey: "AIzaSyCutSz_ARwozGu27NMPk0QZQixW2lGPisw",
+        authDomain: "npstock-2d123.firebaseapp.com",
+        projectId: "npstock-2d123",
+        storageBucket: "npstock-2d123.firebasestorage.app",
+        messagingSenderId: "247952845171",
+        appId: "1:247952845171:web:20a33a3e66a16985d1bd06",
+        measurementId: "G-13W5LN2TNQ"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // ตรวจสอบสถานะการ Login
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+    });
+
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzZaWc5-m8MPykRQVzRyoCVR7zyF0Xn6C4Fpr8rkhcic5xbbhWAMB_DRFKvqfAF9zWo/exec';
     const cat = new URLSearchParams(window.location.search).get('cat');
     document.getElementById('catTitle').innerText = '📁 ' + cat;
@@ -104,7 +128,6 @@
     let editImages = []; 
     let stockData = JSON.parse(localStorage.getItem('stock_cache') || "[]");
 
-    // ฟังก์ชันย่อขนาดรูปภาพ (สำคัญมากเพื่อความเสถียร)
     function resizeImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -114,7 +137,7 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600; // ลดขนาดลงเพื่อความเร็ว
+                    const MAX_WIDTH = 600; 
                     let width = img.width;
                     let height = img.height;
                     if (width > MAX_WIDTH) {
@@ -125,61 +148,12 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // คุณภาพ 60% เพียงพอสำหรับดูอะไหล่
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); 
                 };
             };
         });
     }
 
-    // ฟังก์ชันบันทึกการแก้ไข
-    async function saveEdit() {
-        const btn = document.getElementById('saveBtn');
-        const oldText = btn.innerText;
-        btn.disabled = true; 
-        btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
-
-        const updatedItem = {
-            action: "edit",
-            id: document.getElementById('eId').value,    // รหัสสินค้า (ตัวอ้างอิง)
-            name: document.getElementById('eName').value,
-            qty: document.getElementById('eQty').value,
-            loc: document.getElementById('eLoc').value,
-            cat: cat,
-            img: JSON.stringify(editImages)             // ส่งรูปภาพ (JSON string)
-        };
-
-        try {
-            // ส่งข้อมูลไปยัง Google Sheets
-            await fetch(scriptURL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(updatedItem) 
-            });
-            
-            // ล้าง Cache และแจ้งเตือน
-            localStorage.removeItem('stock_cache'); 
-            alert('✅ บันทึกการเปลี่ยนแปลงเรียบร้อย!');
-            window.location.href = 'Search.html'; 
-        } catch (e) {
-            console.error(e);
-            alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ');
-            btn.disabled = false; 
-            btn.innerText = oldText;
-        }
-    }
-
-    // ฟังก์ชันเพิ่มรูปใหม่พร้อมย่อขนาด
-    async function addNewFiles() {
-        const files = document.getElementById('eFiles').files;
-        if (files.length === 0) return;
-        
-        for (let file of files) {
-            const resizedBase64 = await resizeImage(file);
-            editImages.push(resizedBase64);
-        }
-        showEditThumbs();
-        document.getElementById('eFiles').value = ''; 
-    }
     function renderList() {
         const list = document.getElementById('list');
         list.innerHTML = '';
@@ -190,11 +164,12 @@
             const div = document.createElement('div');
             div.className = 'item-card';
             div.onclick = () => openModal(item);
-            let imgs = JSON.parse(item.img || "[]");
+            let imgs = [];
+            try { imgs = JSON.parse(item.img || "[]"); } catch(e){}
             div.innerHTML = `
                 <div class="item-info">
                     <b>${item.name}</b>
-                    <small>รหัส: ${item.id} | คงเหลือ: ${item.qty}</small>
+                    <small>รหัส: ${item.id} | คงเหลือ: ${item.qty} | ที่เก็บ: ${item.loc}</small>
                 </div>
                 <div class="thumb-preview">${imgs.map(src => `<img src="${src}">`).join('')}</div>
             `;
@@ -215,7 +190,7 @@
         document.getElementById('eQty').value = item.qty;
         document.getElementById('eLoc').value = item.loc;
 
-        currentImages = JSON.parse(item.img || "[]");
+        try { currentImages = JSON.parse(item.img || "[]"); } catch(e){ currentImages = []; }
         editImages = [...currentImages]; 
         
         currentIndex = 0;
@@ -256,9 +231,11 @@
 
     async function addNewFiles() {
         const files = document.getElementById('eFiles').files;
+        if (files.length === 0) return;
+        
         for (let file of files) {
-            const resizedData = await resizeImage(file);
-            editImages.push(resizedData);
+            const resizedBase64 = await resizeImage(file);
+            editImages.push(resizedBase64);
         }
         showEditThumbs();
         document.getElementById('eFiles').value = ''; 
@@ -287,10 +264,10 @@
             });
             
             localStorage.removeItem('stock_cache'); 
-            alert('บันทึกการเปลี่ยนแปลงเรียบร้อย!');
+            alert('✅ บันทึกการเปลี่ยนแปลงเรียบร้อย!');
             window.location.href = 'Search.html'; 
         } catch (e) {
-            alert('เกิดข้อผิดพลาด');
+            alert('❌ เกิดข้อผิดพลาด');
             btn.disabled = false; 
             btn.innerText = "💾 บันทึกการเปลี่ยนแปลง";
         }
